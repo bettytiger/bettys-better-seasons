@@ -1,0 +1,26 @@
+{
+  "season.bbetter_seasons.spring": "Spring",
+  "season.bbetter_seasons.summer": "Summer",
+  "season.bbetter_seasons.autumn": "Autumn",
+  "season.bbetter_seasons.winter": "Winter",
+
+  "subseason.bbetter_seasons.early": "Early",
+  "subseason.bbetter_seasons.mid": "Mid",
+  "subseason.bbetter_seasons.late": "Late",
+
+  "weekday.bbetter_seasons.monday": "Monday",
+  "weekday.bbetter_seasons.tuesday": "Tuesday",
+  "weekday.bbetter_seasons.wednesday": "Wednesday",
+  "weekday.bbetter_seasons.thursday": "Thursday",
+  "weekday.bbetter_seasons.friday": "Friday",
+  "weekday.bbetter_seasons.saturday": "Saturday",
+  "weekday.bbetter_seasons.sunday": "Sunday",
+
+  "chat.bbetter_seasons.date": "%1$s, Day %2$s of %3$s %4$s, Year %5$s",
+
+  "commands.bbetter_seasons.calendar.query": "Current date: %s",
+  "commands.bbetter_seasons.set": "Calendar set to %s",
+  "commands.bbetter_seasons.unknown_season": "Unknown season: %s",
+  "commands.bbetter_seasons.day_out_of_range": "Day must be between 1 and %s",
+  "commands.bbetter_seasons.unavailable": "The calendar is not available right now"
+}
