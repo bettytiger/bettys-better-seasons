@@ -2,6 +2,6 @@
   "parent": "minecraft:block/cross",
   "render_type": "minecraft:cutout",
   "textures": {
-    "cross": "minecraft:block/dead_bush"
+    "cross": "bbetter_seasons:block/withered_crop"
   }
 }

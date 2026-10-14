@@ -22,6 +22,20 @@
   "block.bbetter_seasons.wall_calendar": "Wall Calendar",
   "item.bbetter_seasons.calendar": "Calendar",
   "screen.bbetter_seasons.calendar": "Calendar",
+  "screen.bbetter_seasons.event_edit": "Edit Event",
+
+  "gui.bbetter_seasons.add_event": "Add Event",
+  "gui.bbetter_seasons.edit": "Edit",
+  "gui.bbetter_seasons.delete": "Delete",
+  "gui.bbetter_seasons.save": "Save",
+  "gui.bbetter_seasons.type": "Type",
+  "gui.bbetter_seasons.season": "Season",
+  "gui.bbetter_seasons.recurrence.yearly": "Repeats: Every Year",
+  "gui.bbetter_seasons.recurrence.once": "Repeats: One Time",
+  "gui.bbetter_seasons.field.title": "Title",
+  "gui.bbetter_seasons.field.description": "Description",
+  "gui.bbetter_seasons.field.day": "Day",
+  "gui.bbetter_seasons.field.year": "Year",
 
   "event_type.bbetter_seasons.birthday": "Birthday",
   "event_type.bbetter_seasons.festival": "Festival",
@@ -40,5 +54,12 @@
   "commands.bbetter_seasons.set": "Calendar set to %s",
   "commands.bbetter_seasons.unknown_season": "Unknown season: %s",
   "commands.bbetter_seasons.day_out_of_range": "Day must be between 1 and %s",
-  "commands.bbetter_seasons.unavailable": "The calendar is not available right now"
+  "commands.bbetter_seasons.unavailable": "The calendar is not available right now",
+  "commands.bbetter_seasons.check.no_target": "You are not looking at a block",
+  "commands.bbetter_seasons.check.not_seasonal": "%s is not a seasonal crop",
+  "commands.bbetter_seasons.check.result": "%1$s — grows in: %2$s | in season: %3$s | can grow: %4$s | growth: %5$s | rule: %6$s",
+
+  "transition.bbetter_seasons.end": "End of %s",
+  "transition.bbetter_seasons.begin": "Beginning of %s",
+  "transition.bbetter_seasons.intro": "Year %1$s %2$s"
 }

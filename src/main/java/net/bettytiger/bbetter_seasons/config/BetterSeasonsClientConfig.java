@@ -23,6 +23,8 @@ public class BetterSeasonsClientConfig {
         public final ForgeConfigSpec.IntValue hudMargin;
         public final ForgeConfigSpec.BooleanValue f3Lines;
         public final ForgeConfigSpec.BooleanValue seasonalTooltips;
+        public final ForgeConfigSpec.BooleanValue transitionScreen;
+        public final ForgeConfigSpec.IntValue transitionDurationTicks;
 
         Client(ForgeConfigSpec.Builder builder) {
             builder.comment("Date HUD widget.").push("hud");
@@ -49,6 +51,15 @@ public class BetterSeasonsClientConfig {
             seasonalTooltips = builder
                     .comment("Show \"Grows in\" season lines on seed and crop tooltips.")
                     .define("seasonalTooltips", true);
+
+            builder.comment("Season transition screen (black fade on season change).").push("transition");
+            transitionScreen = builder
+                    .comment("Play the fade-to-black transition when the season changes.")
+                    .define("enabled", true);
+            transitionDurationTicks = builder
+                    .comment("Total transition length in ticks (20 ticks = 1 second).")
+                    .defineInRange("durationTicks", 80, 20, 400);
+            builder.pop();
         }
     }
 }

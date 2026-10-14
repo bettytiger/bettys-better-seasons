@@ -2,15 +2,8 @@ package net.bettytiger.bbetter_seasons.calendar;
 
 import net.bettytiger.bbetter_seasons.api.BetterSeasonsAPI;
 import net.bettytiger.bbetter_seasons.config.BetterSeasonsConfig;
-import net.bettytiger.bbetter_seasons.event.CalendarEventTriggerEvent;
-import net.bettytiger.bbetter_seasons.event.DayChangeEvent;
-import net.bettytiger.bbetter_seasons.event.SeasonChangeEvent;
-import net.bettytiger.bbetter_seasons.event.SubSeasonChangeEvent;
-import net.bettytiger.bbetter_seasons.event.YearChangeEvent;
-import net.bettytiger.bbetter_seasons.network.BetterSeasonsNetwork;
-import net.bettytiger.bbetter_seasons.network.SyncCalendarPacket;
-import net.bettytiger.bbetter_seasons.network.SyncEventsPacket;
-import net.bettytiger.bbetter_seasons.network.SyncSeasonalPacket;
+import net.bettytiger.bbetter_seasons.event.*;
+import net.bettytiger.bbetter_seasons.network.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -145,6 +138,14 @@ public class CalendarManager {
             long boundaryAbs = (oldSeasonAbs + k) * d;
             MinecraftForge.EVENT_BUS.post(new SeasonChangeEvent(server, seasonIdAt(boundaryAbs - 1), seasonIdAt(boundaryAbs)));
         }
+        if (seasonCrossings > 0) {
+            // Play one transition for the final season only, even if several were skipped at once.
+            ResourceLocation finalOld = seasonIdAt(Math.floorDiv(now, (long) d) * d - 1);
+            ResourceLocation finalNew = seasonIdAt(now);
+            if (finalOld != null && finalNew != null) {
+                BetterSeasonsNetwork.sendToAll(SeasonTransitionPacket.change(finalOld, finalNew));
+            }
+        }
 
         long cycle = (long) d * s;
         long oldYearAbs = Math.floorDiv(old, cycle);
@@ -226,5 +227,19 @@ public class CalendarManager {
 
     public void syncEventsTo(ServerPlayer player) {
         BetterSeasonsNetwork.sendTo(player, buildEventsPacket());
+    }
+
+    public void syncPermissionTo(ServerPlayer player) {
+        BetterSeasonsNetwork.sendTo(player, new SyncPermissionPacket(
+                BetterSeasonsConfig.SERVER.eventEditPermission.get(), player.hasPermissions(2)));
+    }
+
+    /** Plays the welcome transition ("Year N Season") for a player entering the world for the first time. */
+    public void sendIntroTo(ServerPlayer player) {
+        CalendarDate date = currentDate();
+        ResourceLocation seasonId = seasonIdAt(date.absDay());
+        if (seasonId != null) {
+            BetterSeasonsNetwork.sendTo(player, SeasonTransitionPacket.intro(seasonId, date.year()));
+        }
     }
 }

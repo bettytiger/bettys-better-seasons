@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "minecraft:block/dead_bush"
+    "layer0": "bbetter_seasons:block/withered_crop"
   }
 }

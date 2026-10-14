@@ -35,6 +35,7 @@ public class CalendarPanel extends AbstractWidget {
     private static final int SIDEBAR_W = 108;
 
     private int viewedSeason = -1;
+    private int selectedDay = -1;
     private boolean showCropList = true;
 
     public CalendarPanel(int x, int y, int width, int height) {
@@ -110,6 +111,9 @@ public class CalendarPanel extends AbstractWidget {
             boolean isToday = viewingCurrentSeason && day == today.day();
             graphics.fill(cx + 1, cy + 1, cx + l.cellW() - 1, cy + l.cellH() - 1,
                     isToday ? 0x60FFE08A : (hovered ? 0x40FFFFFF : 0x20000000));
+            if (day == selectedDay) {
+                graphics.renderOutline(cx + 1, cy + 1, l.cellW() - 2, l.cellH() - 2, 0xFF6FD3FF);
+            }
             graphics.drawString(font, Integer.toString(day), cx + 2, cy + 2, isToday ? 0xFFFFE08A : 0xFFDDDDDD);
 
             List<CalendarEvent> dayEvents = ClientEvents.on(today, season.id(), day);
@@ -256,7 +260,42 @@ public class CalendarPanel extends AbstractWidget {
             showCropList = !showCropList;
             return true;
         }
+        // Select a day cell.
+        int daysPerSeason = Math.max(1, ClientCalendar.getDaysPerSeason());
+        for (int day = 1; day <= daysPerSeason; day++) {
+            int col = (day - 1) % COLS;
+            int row = (day - 1) / COLS;
+            int cx = l.gridX() + col * l.cellW();
+            int cy = l.gridY() + row * l.cellH();
+            if (mouseX >= cx && mouseX < cx + l.cellW() && mouseY >= cy && mouseY < cy + l.cellH()) {
+                selectedDay = day;
+                return true;
+            }
+        }
         return false;
+    }
+
+    public net.minecraft.resources.ResourceLocation getViewedSeasonId() {
+        List<Season> seasons = ClientCalendar.getSeasons();
+        if (seasons.isEmpty()) {
+            return null;
+        }
+        int index = viewedSeason >= 0 && viewedSeason < seasons.size() ? viewedSeason : 0;
+        return seasons.get(index).id();
+    }
+
+    public int getSelectedDay() {
+        return selectedDay;
+    }
+
+    public CalendarEvent getSelectedEvent() {
+        CalendarDate today = ClientCalendar.getDate();
+        ResourceLocation seasonId = getViewedSeasonId();
+        if (today == null || seasonId == null || selectedDay < 1) {
+            return null;
+        }
+        List<CalendarEvent> events = ClientEvents.on(today, seasonId, selectedDay);
+        return events.isEmpty() ? null : events.get(0);
     }
 
     private static boolean inBox(double mx, double my, int[] box) {

@@ -17,6 +17,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -63,6 +65,14 @@ public class ClientDisplayEvents {
                 boolean inSeason = BetterSeasonsAPI.isInSeason(level, blockHit.getBlockPos(), state);
                 left.add("[BBS] Crop under crosshair: " + (inSeason ? "in season" : "out of season"));
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onRenderOverlay(RenderGuiOverlayEvent.Pre event) {
+        // Hide the chat panel while the season transition fade is playing.
+        if (SeasonTransition.isActive() && event.getOverlay().id().equals(VanillaGuiOverlay.CHAT_PANEL.id())) {
+            event.setCanceled(true);
         }
     }
 

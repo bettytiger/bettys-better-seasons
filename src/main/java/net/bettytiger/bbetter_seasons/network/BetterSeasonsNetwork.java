@@ -39,6 +39,21 @@ public class BetterSeasonsNetwork {
                 .decoder(SyncEventsPacket::new)
                 .consumerMainThread(SyncEventsPacket::handle)
                 .add();
+        CHANNEL.messageBuilder(SyncPermissionPacket.class, nextId++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(SyncPermissionPacket::encode)
+                .decoder(SyncPermissionPacket::new)
+                .consumerMainThread(SyncPermissionPacket::handle)
+                .add();
+        CHANNEL.messageBuilder(EditEventPacket.class, nextId++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(EditEventPacket::encode)
+                .decoder(EditEventPacket::new)
+                .consumerMainThread(EditEventPacket::handle)
+                .add();
+        CHANNEL.messageBuilder(SeasonTransitionPacket.class, nextId++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(SeasonTransitionPacket::encode)
+                .decoder(SeasonTransitionPacket::new)
+                .consumerMainThread(SeasonTransitionPacket::handle)
+                .add();
     }
 
     public static void sendToAll(Object packet) {
@@ -47,5 +62,9 @@ public class BetterSeasonsNetwork {
 
     public static void sendTo(ServerPlayer player, Object packet) {
         CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), packet);
+    }
+
+    public static void sendToServer(Object packet) {
+        CHANNEL.sendToServer(packet);
     }
 }

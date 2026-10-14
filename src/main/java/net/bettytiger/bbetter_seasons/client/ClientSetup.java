@@ -13,5 +13,6 @@ public class ClientSetup {
     @SubscribeEvent
     public static void registerOverlays(RegisterGuiOverlaysEvent event) {
         event.registerAboveAll("date_hud", new DateHudOverlay());
+        event.registerAboveAll("season_transition", SeasonTransition.INSTANCE);
     }
 }

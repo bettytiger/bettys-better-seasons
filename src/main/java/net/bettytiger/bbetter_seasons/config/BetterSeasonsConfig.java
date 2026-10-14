@@ -36,6 +36,8 @@ public class BetterSeasonsConfig {
         public final ForgeConfigSpec.BooleanValue chatNotifications;
         public final ForgeConfigSpec.IntValue notificationLeadDays;
 
+        public final ForgeConfigSpec.EnumValue<net.bettytiger.bbetter_seasons.calendar.EditPermission> eventEditPermission;
+
         Server(ForgeConfigSpec.Builder builder) {
             builder.comment("Calendar rules. Changing days per season or season count shifts how existing dates read.")
                     .push("calendar");
@@ -96,6 +98,14 @@ public class BetterSeasonsConfig {
             notificationLeadDays = builder
                     .comment("Also announce events up to this many days ahead (0 = today only).")
                     .defineInRange("leadDays", 3, 0, 100);
+
+            builder.pop();
+
+            builder.comment("Calendar event editing.").push("events");
+
+            eventEditPermission = builder
+                    .comment("Who may create/edit/delete events: OWNER_ONLY (own events; world events op-only), OP, or ALL.")
+                    .defineEnum("eventEditPermission", net.bettytiger.bbetter_seasons.calendar.EditPermission.OWNER_ONLY);
 
             builder.pop();
         }

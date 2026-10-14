@@ -1,7 +1,9 @@
 package net.bettytiger.bbetter_seasons.event;
 
 import net.bettytiger.bbetter_seasons.BettysBetterSeasonsMod;
+import net.bettytiger.bbetter_seasons.calendar.CalendarEventSavedData;
 import net.bettytiger.bbetter_seasons.calendar.CalendarManager;
+import net.bettytiger.bbetter_seasons.calendar.EventTemplates;
 import net.bettytiger.bbetter_seasons.calendar.SeasonManager;
 import net.bettytiger.bbetter_seasons.command.BetterSeasonsCommands;
 import net.bettytiger.bbetter_seasons.seasonal.SeasonalCropRegistry;
@@ -45,6 +47,7 @@ public class BetterSeasonsEvents {
     public static void onAddReloadListener(AddReloadListenerEvent event) {
         event.addListener(new SeasonManager());
         event.addListener(new SeasonalCropRegistry());
+        event.addListener(new EventTemplates());
     }
 
     /** Fires on player login (per-player) and after {@code /reload} (null player = everyone). */
@@ -54,16 +57,31 @@ public class BetterSeasonsEvents {
         if (manager == null) {
             return;
         }
+        // Apply any new event templates (idempotent) before syncing the event list out.
+        boolean templatesChanged = EventTemplates.apply(CalendarEventSavedData.get(manager.overworld()));
+
         ServerPlayer player = event.getPlayer();
         if (player != null) {
             manager.syncTo(player);
             manager.syncSeasonalTo(player);
             manager.syncEventsTo(player);
+            manager.syncPermissionTo(player);
+            // First time this player enters the world: play the welcome transition after the calendar syncs.
+            if (manager.savedData().markIntroShown(player.getUUID())) {
+                manager.sendIntroTo(player);
+            }
         } else {
             // /reload: seasonal JSON was re-read, so let consumers rebuild caches, then re-sync everyone.
             MinecraftForge.EVENT_BUS.post(new SeasonalDataReloadEvent(manager.overworld().getServer()));
             manager.syncAll();
             manager.syncSeasonalAll();
+            manager.syncEventsAll();
+            for (ServerPlayer online : manager.overworld().getServer().getPlayerList().getPlayers()) {
+                manager.syncPermissionTo(online);
+            }
+        }
+        if (templatesChanged && player != null) {
+            // A login applied new template events; make sure everyone sees them, not just this player.
             manager.syncEventsAll();
         }
     }
