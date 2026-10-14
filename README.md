@@ -6,6 +6,7 @@
 
 **A data-driven seasons & calendar library for Minecraft Forge 1.20.1**
 
+[![CurseForge](https://img.shields.io/curseforge/dt/1744359?logo=curseforge&label=CurseForge)](https://www.curseforge.com/minecraft/mc-mods/bettys-better-seasons)
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1-brightgreen)
 ![Forge](https://img.shields.io/badge/Forge-47.4.23+-orange)
 ![Java](https://img.shields.io/badge/Java-17-blue)
@@ -61,7 +62,7 @@ No other mod is required to run the library by itself.
 ## 🧑‍🤝‍🧑 For players
 
 1. Install **Minecraft Forge 47.4.23+** for 1.20.1.
-2. Drop `bbetter_seasons-<version>.jar` into your `mods/` folder.
+2. Download the latest version from [CurseForge](https://www.curseforge.com/minecraft/mc-mods/bettys-better-seasons) and drop the jar into your `mods/` folder.
 3. If a mod lists Betty's Better Seasons as a dependency, both jars go in `mods/` together.
 
 **In-game quick start:**
