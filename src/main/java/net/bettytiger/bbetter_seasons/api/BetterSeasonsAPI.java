@@ -149,12 +149,26 @@ public final class BetterSeasonsAPI {
         return Math.floorMod(targetStart - current, cycle);
     }
 
+    /** Adds an event to the world's calendar and syncs the change to all players. */
     public static void addEvent(ServerLevel level, CalendarEvent event) {
         CalendarEventSavedData.get(level.getServer().overworld()).add(event);
+        syncEvents();
     }
 
+    /** Removes an event and, if one was removed, syncs the change to all players. */
     public static boolean removeEvent(ServerLevel level, UUID id) {
-        return CalendarEventSavedData.get(level.getServer().overworld()).remove(id);
+        boolean removed = CalendarEventSavedData.get(level.getServer().overworld()).remove(id);
+        if (removed) {
+            syncEvents();
+        }
+        return removed;
+    }
+
+    private static void syncEvents() {
+        CalendarManager manager = CalendarManager.get();
+        if (manager != null) {
+            manager.syncEventsAll();
+        }
     }
 
     // --- Seasonal crops ---

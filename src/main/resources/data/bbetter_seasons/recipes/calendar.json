@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "PPP",
+    "PCP",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "item": "minecraft:paper"
+    },
+    "C": {
+      "item": "minecraft:clock"
+    }
+  },
+  "result": {
+    "item": "bbetter_seasons:calendar",
+    "count": 1
+  }
+}

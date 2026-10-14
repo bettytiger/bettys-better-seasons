@@ -16,16 +16,23 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
-/** Create or edit a single calendar event. Submits an {@link EditEventPacket}; the server validates. */
+/**
+ * Create or edit a single calendar event. In a world it submits an {@link EditEventPacket} (the server
+ * validates); the preset editor instead passes callbacks that change its in-memory event list.
+ */
 public class EventEditScreen extends Screen {
 
     private final Screen parent;
     @Nullable
     private final CalendarEvent existing;
+    private final Consumer<CalendarEvent> onSave;
+    @Nullable
+    private final Consumer<CalendarEvent> onDelete;
 
     private final List<EventType> types = new ArrayList<>(EventTypes.all());
-    private final List<Season> seasons = ClientCalendar.getSeasons();
+    private final List<Season> seasons;
 
     private int typeIndex;
     private int seasonIndex;
@@ -38,11 +45,36 @@ public class EventEditScreen extends Screen {
     private Button typeButton;
     private Button seasonButton;
     private Button recurrenceButton;
+    private Button saveButton;
 
+    /** Highest valid day: the world's days per season, or the default when editing a preset. */
+    private final int maxDay;
+    private boolean dayValid = true;
+    private boolean yearValid = true;
+
+    private static final int DEFAULT_DAYS_PER_SEASON = 31;
+    private static final java.util.function.Predicate<String> DIGITS = value -> value.chars().allMatch(Character::isDigit);
+
+    /** Edits an event in the current world, sending the change to the server. */
     public EventEditScreen(Screen parent, @Nullable CalendarEvent existing, @Nullable ResourceLocation defaultSeason, int defaultDay) {
+        this(parent, existing, defaultSeason, defaultDay,
+                event -> BetterSeasonsNetwork.sendToServer(existing != null ? EditEventPacket.update(event) : EditEventPacket.add(event)),
+                event -> BetterSeasonsNetwork.sendToServer(EditEventPacket.delete(event.getId())));
+    }
+
+    /**
+     * Edits an event and hands the result to {@code onSave}. {@code onDelete} receives the original event;
+     * when null, no Delete button is shown.
+     */
+    public EventEditScreen(Screen parent, @Nullable CalendarEvent existing, @Nullable ResourceLocation defaultSeason, int defaultDay,
+                           Consumer<CalendarEvent> onSave, @Nullable Consumer<CalendarEvent> onDelete) {
         super(Component.translatable("screen." + BettysBetterSeasonsMod.MODID + ".event_edit"));
         this.parent = parent;
         this.existing = existing;
+        this.onSave = onSave;
+        this.onDelete = onDelete;
+        this.seasons = SelectableSeasons.list(existing != null ? existing.getSeason() : null);
+        this.maxDay = maxDaysPerSeason();
 
         if (existing != null) {
             typeIndex = Math.max(0, indexOfType(existing.getType()));
@@ -101,12 +133,18 @@ public class EventEditScreen extends Screen {
         // Right column: when the event occurs.
         int ry = topY;
         dayBox = new EditBox(font, rightX, ry, RIGHT_W, 18, Component.literal("Day"));
+        dayBox.setMaxLength(3);
+        dayBox.setFilter(DIGITS);
         dayBox.setValue(Integer.toString(pendingDay));
+        dayBox.setResponder(value -> validate());
         addRenderableWidget(dayBox);
         ry += LABEL_ROW;
 
         yearBox = new EditBox(font, rightX, ry, RIGHT_W, 18, Component.literal("Year"));
+        yearBox.setMaxLength(6);
+        yearBox.setFilter(DIGITS);
         yearBox.setValue(Integer.toString(existing != null ? existing.getYear() : currentYear()));
+        yearBox.setResponder(value -> validate());
         addRenderableWidget(yearBox);
         ry += LABEL_ROW;
 
@@ -119,19 +157,33 @@ public class EventEditScreen extends Screen {
         // Action row spans both columns, below whichever column is taller.
         int actionY = Math.max(leftBottom, ry + 18) + 12;
         int halfW = (totalW - 4) / 2;
-        addRenderableWidget(new ShadowlessButton(leftX, actionY, halfW, 20,
+        saveButton = addRenderableWidget(new ShadowlessButton(leftX, actionY, halfW, 20,
                 Component.translatable("gui." + BettysBetterSeasonsMod.MODID + ".save"), b -> save()));
         addRenderableWidget(new ShadowlessButton(leftX + halfW + 4, actionY, halfW, 20,
                 Component.translatable("gui.cancel"), b -> onClose()));
-        if (existing != null) {
+        if (existing != null && onDelete != null) {
             addRenderableWidget(new ShadowlessButton(leftX, actionY + 24, totalW, 20,
                     Component.translatable("gui." + BettysBetterSeasonsMod.MODID + ".delete"), b -> delete()));
+        }
+        validate();
+    }
+
+    /** Checks the day is within the season and a year is entered; Save stays disabled until both hold. */
+    private void validate() {
+        int day = parseInt(dayBox.getValue(), -1);
+        dayValid = day >= 1 && day <= maxDay;
+        yearValid = !yearBox.getValue().isEmpty();
+        if (saveButton != null) {
+            saveButton.active = dayValid && yearValid;
         }
     }
 
     private void save() {
         if (seasons.isEmpty() || types.isEmpty()) {
             onClose();
+            return;
+        }
+        if (!dayValid || !yearValid) {
             return;
         }
         UUID id = existing != null ? existing.getId() : UUID.randomUUID();
@@ -144,13 +196,13 @@ public class EventEditScreen extends Screen {
 
         CalendarEvent event = new CalendarEvent(id, type, titleBox.getValue(), descriptionBox.getValue(),
                 season, day, recurrence, year, null, null, owner, data);
-        BetterSeasonsNetwork.sendToServer(existing != null ? EditEventPacket.update(event) : EditEventPacket.add(event));
+        onSave.accept(event);
         onClose();
     }
 
     private void delete() {
-        if (existing != null) {
-            BetterSeasonsNetwork.sendToServer(EditEventPacket.delete(existing.getId()));
+        if (existing != null && onDelete != null) {
+            onDelete.accept(existing);
         }
         onClose();
     }
@@ -159,17 +211,21 @@ public class EventEditScreen extends Screen {
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         renderBackground(graphics);
         graphics.drawString(font, this.title, this.width / 2 - font.width(this.title) / 2, this.height / 4 - 20, 0xFFFFFFFF, false);
-        drawFieldLabel(graphics, titleBox, "title");
-        drawFieldLabel(graphics, descriptionBox, "description");
-        drawFieldLabel(graphics, dayBox, "day");
-        drawFieldLabel(graphics, yearBox, "year");
+        drawFieldLabel(graphics, titleBox, fieldLabel("title"), true);
+        drawFieldLabel(graphics, descriptionBox, fieldLabel("description"), true);
+        drawFieldLabel(graphics, dayBox, Component.translatable("gui." + BettysBetterSeasonsMod.MODID + ".field.day_range", maxDay), dayValid);
+        drawFieldLabel(graphics, yearBox, fieldLabel("year"), yearValid);
         super.render(graphics, mouseX, mouseY, partialTick);
     }
 
-    private void drawFieldLabel(GuiGraphics graphics, EditBox box, String key) {
+    private static Component fieldLabel(String key) {
+        return Component.translatable("gui." + BettysBetterSeasonsMod.MODID + ".field." + key);
+    }
+
+    /** Draws a field's caption above it, in red when the field's value is invalid. */
+    private void drawFieldLabel(GuiGraphics graphics, EditBox box, Component label, boolean valid) {
         if (box != null) {
-            graphics.drawString(font, Component.translatable("gui." + BettysBetterSeasonsMod.MODID + ".field." + key),
-                    box.getX(), box.getY() - 10, 0xFFA0A0A0, false);
+            graphics.drawString(font, label, box.getX(), box.getY() - 10, valid ? 0xFFA0A0A0 : 0xFFFF5555, false);
         }
     }
 
@@ -213,9 +269,16 @@ public class EventEditScreen extends Screen {
         return 0;
     }
 
+    /** Days per season in the current world, or the default when editing a preset outside a world. */
+    private static int maxDaysPerSeason() {
+        boolean inWorld = net.minecraft.client.Minecraft.getInstance().level != null && ClientCalendar.getDate() != null;
+        return inWorld ? Math.max(1, ClientCalendar.getDaysPerSeason()) : DEFAULT_DAYS_PER_SEASON;
+    }
+
+    /** The world's current year, or 1 when editing a preset outside a world. */
     private static int currentYear() {
         CalendarDate date = ClientCalendar.getDate();
-        return date != null ? date.year() : 1;
+        return date != null && net.minecraft.client.Minecraft.getInstance().level != null ? date.year() : 1;
     }
 
     private static UUID ownUuid() {

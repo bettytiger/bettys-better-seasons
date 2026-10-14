@@ -76,8 +76,8 @@ public class EditEventPacket {
         boolean changed = false;
         switch (op) {
             case ADD -> {
-                if (mode.canCreate(isOp)) {
-                    CalendarEvent event = CalendarEvent.load(eventTag);
+                CalendarEvent event = CalendarEvent.load(eventTag);
+                if (mode.canCreate(isOp) && isValidDay(event, manager)) {
                     // Non-ops may only create events owned by themselves.
                     if (!isOp && mode != EditPermission.ALL) {
                         event = withOwner(event, sender.getUUID());
@@ -88,8 +88,9 @@ public class EditEventPacket {
             }
             case UPDATE -> {
                 CalendarEvent existing = data.get(targetId);
-                if (existing != null && mode.canModify(isOp, existing.getOwner(), sender.getUUID())) {
-                    CalendarEvent updated = CalendarEvent.load(eventTag);
+                CalendarEvent updated = CalendarEvent.load(eventTag);
+                if (existing != null && isValidDay(updated, manager)
+                        && mode.canModify(isOp, existing.getOwner(), sender.getUUID())) {
                     if (!isOp && mode != EditPermission.ALL) {
                         updated = withOwner(updated, existing.getOwner());
                     }
@@ -109,6 +110,11 @@ public class EditEventPacket {
         if (changed) {
             manager.syncEventsAll();
         }
+    }
+
+    /** Rejects days outside the season, which the editor prevents but a modified client could still send. */
+    private static boolean isValidDay(CalendarEvent event, CalendarManager manager) {
+        return event.getDay() >= 1 && event.getDay() <= manager.daysPerSeason();
     }
 
     private static CalendarEvent withOwner(CalendarEvent event, UUID owner) {

@@ -38,6 +38,7 @@
   "gui.bbetter_seasons.field.title": "Title",
   "gui.bbetter_seasons.field.description": "Description",
   "gui.bbetter_seasons.field.day": "Day",
+  "gui.bbetter_seasons.field.day_range": "Day (1–%s)",
   "gui.bbetter_seasons.field.year": "Year",
 
   "event_type.bbetter_seasons.birthday": "Birthday",
@@ -72,5 +73,31 @@
 
   "transition.bbetter_seasons.end": "End of %s",
   "transition.bbetter_seasons.begin": "Beginning of %s",
-  "transition.bbetter_seasons.intro": "Year %1$s %2$s"
+  "transition.bbetter_seasons.intro": "Year %1$s %2$s",
+
+  "screen.bbetter_seasons.presets": "Calendar Event Presets",
+  "screen.bbetter_seasons.preset_edit": "Edit Calendar Preset",
+  "gui.bbetter_seasons.preset.button": "Calendar Preset: %s",
+  "gui.bbetter_seasons.preset.button.tooltip": "Pre-fill this new world's calendar with events from a saved preset.",
+  "gui.bbetter_seasons.preset.none": "None",
+  "gui.bbetter_seasons.preset.use": "Use Preset",
+  "gui.bbetter_seasons.preset.clear": "No Preset",
+  "gui.bbetter_seasons.preset.new": "New",
+  "gui.bbetter_seasons.preset.edit": "Edit",
+  "gui.bbetter_seasons.preset.delete": "Delete",
+  "gui.bbetter_seasons.preset.open_folder": "Open Folder",
+  "gui.bbetter_seasons.preset.events": "Events: %s",
+  "gui.bbetter_seasons.preset.chosen": "✔ Chosen for this world",
+  "gui.bbetter_seasons.preset.empty": "No presets yet — click New to make one.",
+  "gui.bbetter_seasons.preset.name": "Preset Name",
+  "gui.bbetter_seasons.preset.default_name": "My Calendar Preset",
+  "gui.bbetter_seasons.preset.add_event": "Add Event",
+  "gui.bbetter_seasons.preset.edit_event": "Edit Event",
+  "gui.bbetter_seasons.preset.remove_event": "Remove Event",
+  "gui.bbetter_seasons.preset.no_events": "No events yet — click Add Event.",
+  "gui.bbetter_seasons.preset.save_from_world": "Save as Preset",
+  "gui.bbetter_seasons.preset.saved": "Calendar preset saved",
+  "gui.bbetter_seasons.preset.save_failed": "Could not save calendar preset",
+  "gui.bbetter_seasons.preset.delete_confirm.title": "Delete preset \"%s\"?",
+  "gui.bbetter_seasons.preset.delete_confirm.message": "Its file will be removed. This cannot be undone."
 }

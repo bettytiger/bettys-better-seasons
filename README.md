@@ -37,8 +37,11 @@ it is still a useful calendar for a vanilla pack.
   or a custom `SeasonExemption`.
 - **📅 Calendar events** — birthdays, festivals, holidays and more, created in-game, from datapack
   templates, or in code. Recurring or one-time, with permission-gated editing.
-- **🖥️ UI** — a month-grid calendar screen (also an **embeddable widget** for your own screens), a date
-  HUD, seasonal "Grows in" tooltips, chat notifications, and a season-transition fade.
+- **📋 Calendar event presets** — save a set of events as a preset (in-game, no code) and pick it on the
+  *Create New World* screen to start a new world with its calendar already filled in.
+- **🖥️ UI** — a month-grid calendar screen with event-type icons (also an **embeddable widget** for your
+  own screens) that pauses singleplayer while open, a date HUD, seasonal "Grows in" tooltips, chat
+  notifications, and a season-transition fade.
 - **🔌 Clean public API** — `BetterSeasonsAPI` (both sides) and `BetterSeasonsClientAPI`, plus Forge events
   for day/season/year/sub-season changes, event triggers, and crop checks.
 
@@ -50,7 +53,7 @@ it is still a useful calendar for a vanilla pack.
 | Forge | `47.4.23+` (range `[47,)`) |
 | Java | `17` |
 | Mod ID / namespace | `bbetter_seasons` |
-| Current version | `1.0.0-beta-1.20.1` |
+| Current version | `1.1.0-beta-1.20.1` |
 | License | GNU LGPL 3.0 |
 
 No other mod is required to run the library by itself.
@@ -60,6 +63,15 @@ No other mod is required to run the library by itself.
 1. Install **Minecraft Forge 47.4.23+** for 1.20.1.
 2. Drop `bbetter_seasons-<version>.jar` into your `mods/` folder.
 3. If a mod lists Betty's Better Seasons as a dependency, both jars go in `mods/` together.
+
+**In-game quick start:**
+
+- Craft a **Calendar** — 8 paper around a clock. Right-click it to open the calendar;
+  **Shift + right-click** a surface to place a **Wall Calendar**.
+- Starting a new world? *Create New World → Game* tab → **Calendar Preset** to begin with your saved events
+  already on the calendar.
+
+See the [Players Guide](documentation/Players.md) for everything else.
 
 ## 🛠️ For mod developers
 
@@ -81,7 +93,7 @@ dependencies {
     // implementation fg.deobf("curse.maven:bettys-better-seasons-PROJECT_ID:FILE_ID")
 
     // Option B — local jar in libs/
-    implementation fg.deobf("net.bettytiger:bbetter_seasons:1.0.0-beta-1.20.1")
+    implementation fg.deobf("net.bettytiger:bbetter_seasons:1.1.0-beta-1.20.1")
 }
 ```
 
@@ -91,7 +103,7 @@ dependencies {
 [[dependencies."yourmodid"]]
     modId = "bbetter_seasons"
     mandatory = true                  # or false if you keep a no-seasons fallback
-    versionRange = "[1.0.0-beta-1.20.1,)"  # match the version string you build against
+    versionRange = "[1.1.0-beta-1.20.1,)"  # match the version string you build against
     ordering = "AFTER"
     side = "BOTH"
 ```
