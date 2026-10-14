@@ -131,3 +131,6 @@ runs/
 /documentation/Developers.md
 /documentation/Home.md
 /documentation/Players.md
+
+# Local Maven repository written by `./gradlew publish`
+/mcmodsrepo/
