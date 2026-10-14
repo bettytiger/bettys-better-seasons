@@ -48,11 +48,9 @@ public class ModRegistry {
                     .sound(SoundType.WOOD)
                     .noOcclusion()));
 
-    public static final RegistryObject<Item> WALL_CALENDAR_ITEM = ITEMS.register("wall_calendar",
-            () -> new BlockItem(WALL_CALENDAR.get(), new Item.Properties()));
-
+    /** The handheld calendar is also the wall calendar's item: it places the block and is what it drops. */
     public static final RegistryObject<Item> CALENDAR = ITEMS.register("calendar",
-            () -> new CalendarItem(new Item.Properties().stacksTo(1)));
+            () -> new CalendarItem(WALL_CALENDAR.get(), new Item.Properties().stacksTo(1)));
 
     private ModRegistry() {
     }
