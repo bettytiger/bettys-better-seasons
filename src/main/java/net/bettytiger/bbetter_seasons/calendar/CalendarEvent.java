@@ -11,6 +11,7 @@ import java.util.UUID;
  * One entry on the calendar. Stored in {@link CalendarEventSavedData} and created either in-game
  * (Phase 5 editor), from datapack templates (Phase 5), or in code via {@code BetterSeasonsAPI.addEvent}.
  */
+@SuppressWarnings("ALL")
 public class CalendarEvent {
 
     private final UUID id;

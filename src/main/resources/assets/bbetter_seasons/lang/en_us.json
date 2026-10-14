@@ -17,6 +17,7 @@
   "weekday.bbetter_seasons.sunday": "Sunday",
 
   "chat.bbetter_seasons.date": "%1$s, Day %2$s of %3$s %4$s, Year %5$s",
+  "chat.bbetter_seasons.date_short": "%1$s %2$s, Year %3$s",
 
   "block.bbetter_seasons.withered_crop": "Withered Crop",
   "block.bbetter_seasons.wall_calendar": "Wall Calendar",

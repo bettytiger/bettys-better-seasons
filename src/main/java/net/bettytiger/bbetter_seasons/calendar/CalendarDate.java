@@ -50,6 +50,18 @@ public record CalendarDate(long absDay, int day, int seasonIndex, SubSeason subS
      *
      * @param seasons the ordered season list this date's {@link #seasonIndex()} refers to
      */
+    /**
+     * Compact form such as "Spring 9, Year 1", for logs and receipts.
+     *
+     * @param seasons the ordered season list this date's {@link #seasonIndex()} refers to
+     */
+    public MutableComponent shortLabel(List<Season> seasons) {
+        Component seasonName = seasonIndex >= 0 && seasonIndex < seasons.size()
+                ? seasons.get(seasonIndex).displayName()
+                : Component.literal("?");
+        return Component.translatable("chat." + BettysBetterSeasonsMod.MODID + ".date_short", seasonName, day, year);
+    }
+
     public MutableComponent describe(List<Season> seasons) {
         Component seasonName = seasonIndex >= 0 && seasonIndex < seasons.size()
                 ? seasons.get(seasonIndex).displayName()

@@ -17,6 +17,9 @@ public final class ClientCalendar {
     private static List<Season> seasons = List.of();
     private static int daysPerSeason = 31;
     private static int ticksPerDay = 24000;
+    private static int startYear = 1;
+    private static int earlyEnd = 10;
+    private static int midEnd = 21;
 
     private ClientCalendar() {
     }
@@ -25,6 +28,9 @@ public final class ClientCalendar {
         seasons = List.copyOf(packet.seasons());
         daysPerSeason = packet.daysPerSeason();
         ticksPerDay = packet.ticksPerDay();
+        startYear = packet.startYear();
+        earlyEnd = packet.earlyEnd();
+        midEnd = packet.midEnd();
         date = CalendarDate.of(
                 packet.absDay(),
                 packet.daysPerSeason(),
@@ -49,5 +55,17 @@ public final class ClientCalendar {
 
     public static int getTicksPerDay() {
         return ticksPerDay;
+    }
+
+    public static int getStartYear() {
+        return startYear;
+    }
+
+    public static int getEarlyEnd() {
+        return earlyEnd;
+    }
+
+    public static int getMidEnd() {
+        return midEnd;
     }
 }

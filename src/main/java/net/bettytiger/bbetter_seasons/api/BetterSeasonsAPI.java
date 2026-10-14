@@ -94,6 +94,37 @@ public final class BetterSeasonsAPI {
         return result;
     }
 
+    /**
+     * Reconstructs the calendar date for an arbitrary absolute day number, using the current calendar
+     * rules. Handy for turning a stored {@code absDay} (e.g. a shipping-log entry) back into a date.
+     * Returns null if the calendar isn't ready.
+     */
+    @Nullable
+    public static CalendarDate dateFor(Level level, long absDay) {
+        if (level.isClientSide) {
+            List<Season> seasons = ClientCalendar.getSeasons();
+            if (seasons.isEmpty()) {
+                return null;
+            }
+            return CalendarDate.of(absDay, ClientCalendar.getDaysPerSeason(), seasons.size(),
+                    ClientCalendar.getStartYear(), ClientCalendar.getEarlyEnd(), ClientCalendar.getMidEnd());
+        }
+        CalendarManager manager = CalendarManager.get();
+        return manager != null ? manager.dateOf(absDay) : null;
+    }
+
+    /** Compact "Spring 9, Year 1" label for a date. */
+    public static net.minecraft.network.chat.Component formatShort(Level level, CalendarDate date) {
+        return date.shortLabel(getSeasons(level));
+    }
+
+    /** Compact "Spring 9, Year 1" label for a stored absolute day, or null if the calendar isn't ready. */
+    @Nullable
+    public static net.minecraft.network.chat.Component formatShort(Level level, long absDay) {
+        CalendarDate date = dateFor(level, absDay);
+        return date != null ? date.shortLabel(getSeasons(level)) : null;
+    }
+
     /** Days until day 1 of the given season (0 if today is day 1 of it). -1 if unavailable. */
     public static int daysUntil(Level level, ResourceLocation season) {
         List<Season> seasons = getSeasons(level);
