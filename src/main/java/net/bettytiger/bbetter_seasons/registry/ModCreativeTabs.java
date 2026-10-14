@@ -14,7 +14,6 @@ public class ModCreativeTabs {
     public static void buildContents(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
             event.accept(ModRegistry.CALENDAR.get());
-            event.accept(ModRegistry.WALL_CALENDAR_ITEM.get());
         } else if (event.getTabKey() == CreativeModeTabs.NATURAL_BLOCKS) {
             event.accept(ModRegistry.WITHERED_CROP_ITEM.get());
         }

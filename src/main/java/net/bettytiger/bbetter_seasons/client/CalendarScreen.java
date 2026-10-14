@@ -5,13 +5,12 @@ import net.bettytiger.bbetter_seasons.calendar.CalendarEvent;
 import net.bettytiger.bbetter_seasons.network.BetterSeasonsNetwork;
 import net.bettytiger.bbetter_seasons.network.EditEventPacket;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
 
 /** Full-screen host for the {@link CalendarPanel}, opened by the handheld item, wall block, or API. */
 public class CalendarScreen extends Screen {
-
     private static final int MAX_WIDTH = 320;
     private static final int MAX_HEIGHT = 190;
 
@@ -34,23 +33,25 @@ public class CalendarScreen extends Screen {
         if (ClientPermissions.canCreate()) {
             int buttonsY = panelY + panelHeight + 4;
             int buttonWidth = Math.min(96, (panelWidth - 8) / 3);
-            addRenderableWidget(Button.builder(Component.translatable("gui." + BettysBetterSeasonsMod.MODID + ".add_event"), b -> openAdd())
-                    .bounds(panelX, buttonsY, buttonWidth, 20).build());
-            addRenderableWidget(Button.builder(Component.translatable("gui." + BettysBetterSeasonsMod.MODID + ".edit"), b -> openEdit())
-                    .bounds(panelX + buttonWidth + 4, buttonsY, buttonWidth, 20).build());
-            addRenderableWidget(Button.builder(Component.translatable("gui." + BettysBetterSeasonsMod.MODID + ".delete"), b -> deleteSelected())
-                    .bounds(panelX + (buttonWidth + 4) * 2, buttonsY, buttonWidth, 20).build());
+            addRenderableWidget(new ShadowlessButton(panelX, buttonsY, buttonWidth, 20,
+                    Component.translatable("gui." + BettysBetterSeasonsMod.MODID + ".add_event"), b -> openAdd()));
+            addRenderableWidget(new ShadowlessButton(panelX + buttonWidth + 4, buttonsY, buttonWidth, 20,
+                    Component.translatable("gui." + BettysBetterSeasonsMod.MODID + ".edit"), b -> openEdit()));
+            addRenderableWidget(new ShadowlessButton(panelX + (buttonWidth + 4) * 2, buttonsY, buttonWidth, 20,
+                    Component.translatable("gui." + BettysBetterSeasonsMod.MODID + ".delete"), b -> deleteSelected()));
         }
     }
 
     private void openAdd() {
         int day = panel.getSelectedDay() > 0 ? panel.getSelectedDay() : 1;
+        assert this.minecraft != null;
         this.minecraft.setScreen(new EventEditScreen(this, null, panel.getViewedSeasonId(), day));
     }
 
     private void openEdit() {
         CalendarEvent selected = panel.getSelectedEvent();
         if (selected != null && ClientPermissions.canModify(selected)) {
+            assert this.minecraft != null;
             this.minecraft.setScreen(new EventEditScreen(this, selected, selected.getSeason(), selected.getDay()));
         }
     }
@@ -63,7 +64,7 @@ public class CalendarScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         renderBackground(graphics);
         super.render(graphics, mouseX, mouseY, partialTick);
     }

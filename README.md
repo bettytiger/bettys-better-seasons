@@ -38,7 +38,7 @@ it is still a useful calendar for a vanilla pack.
 - **📅 Calendar events** — birthdays, festivals, holidays and more, created in-game, from datapack
   templates, or in code. Recurring or one-time, with permission-gated editing.
 - **🖥️ UI** — a month-grid calendar screen (also an **embeddable widget** for your own screens), a date
-  HUD, F3 debug lines, seasonal "Grows in" tooltips, chat notifications, and a season-transition fade.
+  HUD, seasonal "Grows in" tooltips, chat notifications, and a season-transition fade.
 - **🔌 Clean public API** — `BetterSeasonsAPI` (both sides) and `BetterSeasonsClientAPI`, plus Forge events
   for day/season/year/sub-season changes, event triggers, and crop checks.
 
@@ -153,7 +153,7 @@ Tag `bbetter_seasons:ignores_seasons` (block tag) marks soils that keep crops in
 
 Forge TOML, generated on first run:
 
-- **Client** (global): `config/bbetter_seasons-client.toml` — HUD on/off/corner/scale, F3 lines,
+- **Client** (global): `config/bbetter_seasons-client.toml` — HUD on/off/corner/scale,
   seasonal tooltips, transition screen on/off + duration.
 - **Server** (per-world): `<world>/serverconfig/bbetter_seasons-server.toml` — days per season, ticks per
   day, start year, sub-season splits, seasonal dimensions, seasonal-crop master switch, `slowFactor`,

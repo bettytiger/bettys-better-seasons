@@ -1,5 +1,8 @@
 {
   "variants": {
-    "": { "model": "bbetter_seasons:block/wall_calendar" }
+    "facing=north": { "model": "bbetter_seasons:block/wall_calendar" },
+    "facing=east":  { "model": "bbetter_seasons:block/wall_calendar", "y": 90 },
+    "facing=south": { "model": "bbetter_seasons:block/wall_calendar", "y": 180 },
+    "facing=west":  { "model": "bbetter_seasons:block/wall_calendar", "y": 270 }
   }
 }

@@ -1,5 +1,6 @@
 package net.bettytiger.bbetter_seasons.client;
 
+import net.bettytiger.bbetter_seasons.BettysBetterSeasonsMod;
 import net.bettytiger.bbetter_seasons.api.BetterSeasonsAPI;
 import net.bettytiger.bbetter_seasons.calendar.CalendarDate;
 import net.bettytiger.bbetter_seasons.calendar.CalendarEvent;
@@ -19,13 +20,16 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The season month grid as a reusable widget. Added to {@link CalendarScreen} and embeddable in any
  * other screen (a consumer mod's computer app, for example) via {@code BetterSeasonsClientAPI.createCalendarPanel}.
  * Read-only in Phase 4; the add/edit/delete controls arrive with the Phase 5 editor.
  */
+@SuppressWarnings("ALL")
 public class CalendarPanel extends AbstractWidget {
 
     private static final int COLS = 7;
@@ -33,6 +37,17 @@ public class CalendarPanel extends AbstractWidget {
     private static final int HEADER_H = 14;
     private static final int WEEKDAY_H = 10;
     private static final int SIDEBAR_W = 108;
+    private static final int ICON_SIZE = 8;
+
+    /** The background is authored at this size; it is stretched to the panel. */
+    private static final int BG_WIDTH = 320;
+    private static final int BG_HEIGHT = 190;
+    private static final ResourceLocation BACKGROUND =
+            new ResourceLocation(BettysBetterSeasonsMod.MODID, "textures/gui/calendar_background.png");
+    private static final ResourceLocation GENERAL_ICON =
+            new ResourceLocation(BettysBetterSeasonsMod.MODID, "textures/gui/general_icon.png");
+    /** Resolved event-type icon per type id (falls back to general_icon when none exists). */
+    private static final Map<ResourceLocation, ResourceLocation> ICON_CACHE = new HashMap<>();
 
     private int viewedSeason = -1;
     private int selectedDay = -1;
@@ -65,13 +80,12 @@ public class CalendarPanel extends AbstractWidget {
     @Override
     protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         Font font = Minecraft.getInstance().font;
-        graphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), 0xD0101018);
-        graphics.renderOutline(getX(), getY(), getWidth(), getHeight(), 0xFF3A3A48);
+        graphics.blit(BACKGROUND, getX(), getY(), getWidth(), getHeight(), 0.0f, 0.0f, BG_WIDTH, BG_HEIGHT, BG_WIDTH, BG_HEIGHT);
 
         CalendarDate today = ClientCalendar.getDate();
         List<Season> seasons = ClientCalendar.getSeasons();
         if (today == null || seasons.isEmpty()) {
-            graphics.drawCenteredString(font, Component.literal("Calendar unavailable"),
+            centered(graphics, font, Component.literal("Calendar unavailable"),
                     getX() + getWidth() / 2, getY() + getHeight() / 2 - 4, 0xFFAAAAAA);
             return;
         }
@@ -84,18 +98,20 @@ public class CalendarPanel extends AbstractWidget {
         Layout l = layout(daysPerSeason);
 
         // Header: arrows + season name + year.
-        graphics.drawString(font, Component.literal("◀"), l.leftArrow()[0], l.leftArrow()[1] + 2, 0xFFFFFFFF);
-        graphics.drawString(font, Component.literal("▶"), l.rightArrow()[0] + 2, l.rightArrow()[1] + 2, 0xFFFFFFFF);
+        text(graphics, font, Component.literal("◀"), l.leftArrow()[0], l.leftArrow()[1] + 2, 0xFF000000);
+        text(graphics, font, Component.literal("▶"), l.rightArrow()[0] + 2, l.rightArrow()[1] + 2, 0xFF000000);
         Component heading = Component.empty().append(season.displayName())
                 .append(Component.literal(", Year " + today.year()));
-        graphics.drawCenteredString(font, heading, l.gridX() + (l.cellW() * COLS) / 2, getY() + PADDING + 2,
+        centered(graphics, font, heading, l.gridX() + (l.cellW() * COLS) / 2, getY() + PADDING + 2,
                 0xFF000000 | season.color());
 
         // Weekday labels.
         String[] weekdays = {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"};
         int weekdayY = getY() + PADDING + HEADER_H;
         for (int c = 0; c < COLS; c++) {
-            graphics.drawCenteredString(font, weekdays[c], l.gridX() + c * l.cellW() + l.cellW() / 2, weekdayY, 0xFF8890A0);
+            int hx = l.gridX() + c * l.cellW();
+            graphics.renderOutline(hx, weekdayY, l.cellW(), WEEKDAY_H, 0xFF000000);
+            centered(graphics, font, weekdays[c], hx + l.cellW() / 2, weekdayY + (WEEKDAY_H - font.lineHeight) / 2, 0xFF000000);
         }
 
         // Day grid.
@@ -109,17 +125,25 @@ public class CalendarPanel extends AbstractWidget {
             boolean hovered = mouseX >= cx && mouseX < cx + l.cellW() && mouseY >= cy && mouseY < cy + l.cellH();
 
             boolean isToday = viewingCurrentSeason && day == today.day();
-            graphics.fill(cx + 1, cy + 1, cx + l.cellW() - 1, cy + l.cellH() - 1,
-                    isToday ? 0x60FFE08A : (hovered ? 0x40FFFFFF : 0x20000000));
+            // Highlight today / hover only; let the background texture show through other cells.
+            if (isToday) {
+                graphics.fill(cx + 1, cy + 1, cx + l.cellW() - 1, cy + l.cellH() - 1, 0x60FFE08A);
+            } else if (hovered) {
+                graphics.fill(cx + 1, cy + 1, cx + l.cellW() - 1, cy + l.cellH() - 1, 0x40FFFFFF);
+            }
+            // 1px border per cell (no top edge) for visibility; today's border pulses purple.
+            borderNoTop(graphics, cx, cy, l.cellW(), l.cellH(), isToday ? pulsingPurple() : 0xFF000000);
             if (day == selectedDay) {
                 graphics.renderOutline(cx + 1, cy + 1, l.cellW() - 2, l.cellH() - 2, 0xFF6FD3FF);
             }
-            graphics.drawString(font, Integer.toString(day), cx + 2, cy + 2, isToday ? 0xFFFFE08A : 0xFFDDDDDD);
+            text(graphics, font, Integer.toString(day), cx + 2, cy + 2, 0xFF000000);
 
             List<CalendarEvent> dayEvents = ClientEvents.on(today, season.id(), day);
             if (!dayEvents.isEmpty()) {
-                int markY = cy + l.cellH() - 3;
-                graphics.fill(cx + 2, markY, cx + l.cellW() - 2, markY + 1, 0xFF000000 | dayEvents.get(0).displayColor());
+                ResourceLocation icon = iconFor(dayEvents.get(0).getType());
+                int iconX = cx + (l.cellW() - ICON_SIZE) / 2;
+                int iconY = cy + (l.cellH() - ICON_SIZE) / 2;
+                graphics.blit(icon, iconX, iconY, 0.0f, 0.0f, ICON_SIZE, ICON_SIZE, ICON_SIZE, ICON_SIZE);
                 if (hovered) {
                     hoverTooltip = eventTooltip(dayEvents, season);
                 }
@@ -139,6 +163,8 @@ public class CalendarPanel extends AbstractWidget {
         int x = l.sidebarX();
         int y = getY() + PADDING;
         int lineH = font.lineHeight + 2;
+        int groupGap = 8;
+        int black = 0xFF000000;
         Level level = Minecraft.getInstance().level;
 
         // Next season countdown.
@@ -146,36 +172,36 @@ public class CalendarPanel extends AbstractWidget {
         Season nextSeason = seasons.get(nextIndex);
         int until = level != null ? BetterSeasonsAPI.daysUntil(level, nextSeason.id()) : -1;
         if (until >= 0) {
-            graphics.drawString(font, Component.literal(until + " days until").withStyle(s -> s.withColor(0xB0B8C8)), x, y, 0xFFB0B8C8);
+            text(graphics, font, Component.literal(until + " days until"), x, y, black);
             y += lineH;
-            graphics.drawString(font, nextSeason.displayName(), x, y, 0xFF000000 | nextSeason.color());
-            y += lineH + 2;
+            text(graphics, font, nextSeason.displayName(), x, y, 0xFF000000 | nextSeason.color());
+            y += lineH + groupGap;
         }
 
         // Next upcoming event.
         CalendarEvent next = nextUpcomingEvent(today, seasons);
-        graphics.drawString(font, Component.literal("Next event:").withStyle(s -> s.withColor(0x8890A0)), x, y, 0xFF8890A0);
+        text(graphics, font, Component.literal("Next event:"), x, y, black);
         y += lineH;
-        graphics.drawString(font, next != null ? Component.literal(next.getTitle()) : Component.literal("—"), x, y, 0xFFDDDDDD);
-        y += lineH + 2;
+        text(graphics, font, next != null ? Component.literal(next.getTitle()) : Component.literal("—"), x, y, black);
+        y += lineH + groupGap;
 
         // In-season crop list (header toggles the list).
         Component cropHeader = Component.literal((showCropList ? "▼ " : "▶ ") + "In season now");
-        graphics.drawString(font, cropHeader, x, y, 0xFF8890A0);
-        y += lineH;
+        text(graphics, font, cropHeader, x, y, black);
+        y += lineH + 2;
         if (showCropList) {
             int shown = 0;
             for (Item item : inSeasonItems(level, seasons.get(Math.floorMod(today.seasonIndex(), seasons.size())).id())) {
                 if (shown >= 6) {
-                    graphics.drawString(font, Component.literal("…"), x + 4, y, 0xFF8890A0);
+                    text(graphics, font, Component.literal("…"), x + 4, y, black);
                     break;
                 }
-                graphics.drawString(font, item.getDescription(), x + 4, y, 0xFFCCCCCC);
+                text(graphics, font, item.getDescription(), x + 4, y, black);
                 y += lineH;
                 shown++;
             }
             if (shown == 0) {
-                graphics.drawString(font, Component.literal("—").withStyle(s -> s.withColor(0x8890A0)), x + 4, y, 0xFF8890A0);
+                text(graphics, font, Component.literal("—"), x + 4, y, black);
             }
         }
     }
@@ -300,6 +326,47 @@ public class CalendarPanel extends AbstractWidget {
 
     private static boolean inBox(double mx, double my, int[] box) {
         return mx >= box[0] && mx < box[0] + box[2] && my >= box[1] && my < box[1] + box[3];
+    }
+
+    /** Draws a 1px cell border without the top edge (left, right, bottom only). */
+    private static void borderNoTop(GuiGraphics g, int x, int y, int w, int h, int color) {
+        g.fill(x, y + h - 1, x + w, y + h, color);   // bottom
+        g.fill(x, y, x + 1, y + h, color);           // left
+        g.fill(x + w - 1, y, x + w, y + h, color);   // right
+    }
+
+    /** A purple border color whose alpha pulses over time, for the current day. */
+    private static int pulsingPurple() {
+        float pulse = (float) (0.5 + 0.5 * Math.sin(System.currentTimeMillis() / 250.0));
+        int alpha = 0x50 + (int) (pulse * 0xAF);
+        return (alpha << 24) | 0xA020F0;
+    }
+
+    // Text helpers that draw without a drop shadow (over the custom background).
+    private static void text(GuiGraphics g, Font f, Component c, int x, int y, int color) {
+        g.drawString(f, c, x, y, color, false);
+    }
+
+    private static void text(GuiGraphics g, Font f, String s, int x, int y, int color) {
+        g.drawString(f, s, x, y, color, false);
+    }
+
+    private static void centered(GuiGraphics g, Font f, Component c, int centerX, int y, int color) {
+        g.drawString(f, c, centerX - f.width(c) / 2, y, color, false);
+    }
+
+    private static void centered(GuiGraphics g, Font f, String s, int centerX, int y, int color) {
+        g.drawString(f, s, centerX - f.width(s) / 2, y, color, false);
+    }
+
+    /** Icon for an event type: {@code textures/gui/<path>_icon.png}, or {@code general_icon} if absent. */
+    private static ResourceLocation iconFor(ResourceLocation eventType) {
+        return ICON_CACHE.computeIfAbsent(eventType, type -> {
+            ResourceLocation candidate = new ResourceLocation(type.getNamespace(),
+                    "textures/gui/" + type.getPath() + "_icon.png");
+            return Minecraft.getInstance().getResourceManager().getResource(candidate).isPresent()
+                    ? candidate : GENERAL_ICON;
+        });
     }
 
     @Override

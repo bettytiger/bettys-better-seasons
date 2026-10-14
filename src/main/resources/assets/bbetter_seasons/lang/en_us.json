@@ -17,6 +17,8 @@
   "weekday.bbetter_seasons.sunday": "Sunday",
 
   "chat.bbetter_seasons.date": "%1$s, Day %2$s of %3$s %4$s, Year %5$s",
+  "hud.bbetter_seasons.line1": "%1$s, %2$s Year %3$s",
+  "hud.bbetter_seasons.line2": "%1$s %2$s",
   "chat.bbetter_seasons.date_short": "%1$s %2$s, Year %3$s",
 
   "block.bbetter_seasons.withered_crop": "Withered Crop",
@@ -42,6 +44,14 @@
   "event_type.bbetter_seasons.festival": "Festival",
   "event_type.bbetter_seasons.holiday": "Holiday",
   "event_type.bbetter_seasons.anniversary": "Anniversary",
+  "event_type.bbetter_seasons.general": "General",
+  "event_type.bbetter_seasons.social_gathering": "Social Gathering",
+  "event_type.bbetter_seasons.formal": "Formal",
+  "event_type.bbetter_seasons.party": "Party",
+  "event_type.bbetter_seasons.general": "General",
+  "event_type.bbetter_seasons.social_gathering": "Social Gathering",
+  "event_type.bbetter_seasons.formal": "Formal",
+  "event_type.bbetter_seasons.party": "Party",
 
 
   "tooltip.bbetter_seasons.grows_in": "Grows in: %s",

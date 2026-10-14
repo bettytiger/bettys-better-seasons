@@ -84,17 +84,17 @@ public class EventEditScreen extends Screen {
         addRenderableWidget(descriptionBox);
         ly += LABEL_ROW;
 
-        typeButton = Button.builder(typeLabel(), b -> {
+        typeButton = new ShadowlessButton(leftX, ly, LEFT_W, 18, typeLabel(), b -> {
             typeIndex = (typeIndex + 1) % Math.max(1, types.size());
             b.setMessage(typeLabel());
-        }).bounds(leftX, ly, LEFT_W, 18).build();
+        });
         addRenderableWidget(typeButton);
         ly += BUTTON_ROW;
 
-        seasonButton = Button.builder(seasonLabel(), b -> {
+        seasonButton = new ShadowlessButton(leftX, ly, LEFT_W, 18, seasonLabel(), b -> {
             seasonIndex = (seasonIndex + 1) % Math.max(1, seasons.size());
             b.setMessage(seasonLabel());
-        }).bounds(leftX, ly, LEFT_W, 18).build();
+        });
         addRenderableWidget(seasonButton);
         int leftBottom = ly + 18;
 
@@ -110,22 +110,22 @@ public class EventEditScreen extends Screen {
         addRenderableWidget(yearBox);
         ry += LABEL_ROW;
 
-        recurrenceButton = Button.builder(recurrenceLabel(), b -> {
+        recurrenceButton = new ShadowlessButton(rightX, ry, RIGHT_W, 18, recurrenceLabel(), b -> {
             recurrence = recurrence == Recurrence.REPEAT_YEARLY ? Recurrence.ONE_TIME : Recurrence.REPEAT_YEARLY;
             b.setMessage(recurrenceLabel());
-        }).bounds(rightX, ry, RIGHT_W, 18).build();
+        });
         addRenderableWidget(recurrenceButton);
 
         // Action row spans both columns, below whichever column is taller.
         int actionY = Math.max(leftBottom, ry + 18) + 12;
         int halfW = (totalW - 4) / 2;
-        addRenderableWidget(Button.builder(Component.translatable("gui." + BettysBetterSeasonsMod.MODID + ".save"), b -> save())
-                .bounds(leftX, actionY, halfW, 20).build());
-        addRenderableWidget(Button.builder(Component.translatable("gui.cancel"), b -> onClose())
-                .bounds(leftX + halfW + 4, actionY, halfW, 20).build());
+        addRenderableWidget(new ShadowlessButton(leftX, actionY, halfW, 20,
+                Component.translatable("gui." + BettysBetterSeasonsMod.MODID + ".save"), b -> save()));
+        addRenderableWidget(new ShadowlessButton(leftX + halfW + 4, actionY, halfW, 20,
+                Component.translatable("gui.cancel"), b -> onClose()));
         if (existing != null) {
-            addRenderableWidget(Button.builder(Component.translatable("gui." + BettysBetterSeasonsMod.MODID + ".delete"), b -> delete())
-                    .bounds(leftX, actionY + 24, totalW, 20).build());
+            addRenderableWidget(new ShadowlessButton(leftX, actionY + 24, totalW, 20,
+                    Component.translatable("gui." + BettysBetterSeasonsMod.MODID + ".delete"), b -> delete()));
         }
     }
 
@@ -158,7 +158,7 @@ public class EventEditScreen extends Screen {
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         renderBackground(graphics);
-        graphics.drawCenteredString(font, this.title, this.width / 2, this.height / 4 - 20, 0xFFFFFFFF);
+        graphics.drawString(font, this.title, this.width / 2 - font.width(this.title) / 2, this.height / 4 - 20, 0xFFFFFFFF, false);
         drawFieldLabel(graphics, titleBox, "title");
         drawFieldLabel(graphics, descriptionBox, "description");
         drawFieldLabel(graphics, dayBox, "day");
@@ -169,7 +169,7 @@ public class EventEditScreen extends Screen {
     private void drawFieldLabel(GuiGraphics graphics, EditBox box, String key) {
         if (box != null) {
             graphics.drawString(font, Component.translatable("gui." + BettysBetterSeasonsMod.MODID + ".field." + key),
-                    box.getX(), box.getY() - 10, 0xFFA0A0A0);
+                    box.getX(), box.getY() - 10, 0xFFA0A0A0, false);
         }
     }
 

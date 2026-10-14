@@ -45,7 +45,8 @@ public class ModRegistry {
             () -> new WallCalendarBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD)
                     .strength(1.0f)
-                    .sound(SoundType.WOOD)));
+                    .sound(SoundType.WOOD)
+                    .noOcclusion()));
 
     public static final RegistryObject<Item> WALL_CALENDAR_ITEM = ITEMS.register("wall_calendar",
             () -> new BlockItem(WALL_CALENDAR.get(), new Item.Properties()));

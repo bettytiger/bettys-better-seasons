@@ -20,6 +20,7 @@ import java.util.*;
  * pre-fill a world with. Applied once per template id (tracked in {@link CalendarEventSavedData}), so a
  * player deleting a pre-filled event keeps it gone across loads.
  */
+@SuppressWarnings("ALL")
 public class EventTemplates extends SimpleJsonResourceReloadListener {
 
     private static final Logger LOGGER = LogUtils.getLogger();

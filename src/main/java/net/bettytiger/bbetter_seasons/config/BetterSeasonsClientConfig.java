@@ -4,7 +4,7 @@ import net.bettytiger.bbetter_seasons.client.HudCorner;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
-/** Client-only display config: the date HUD, F3 lines, and seasonal tooltips. */
+/** Client-only display config: the date HUD, seasonal tooltips, and the transition screen. */
 public class BetterSeasonsClientConfig {
 
     public static final Client CLIENT;
@@ -21,7 +21,6 @@ public class BetterSeasonsClientConfig {
         public final ForgeConfigSpec.EnumValue<HudCorner> hudCorner;
         public final ForgeConfigSpec.DoubleValue hudScale;
         public final ForgeConfigSpec.IntValue hudMargin;
-        public final ForgeConfigSpec.BooleanValue f3Lines;
         public final ForgeConfigSpec.BooleanValue seasonalTooltips;
         public final ForgeConfigSpec.BooleanValue transitionScreen;
         public final ForgeConfigSpec.IntValue transitionDurationTicks;
@@ -43,10 +42,6 @@ public class BetterSeasonsClientConfig {
                     .defineInRange("margin", 4, 0, 256);
 
             builder.pop();
-
-            f3Lines = builder
-                    .comment("Show calendar lines on the F3 debug screen.")
-                    .define("f3Lines", true);
 
             seasonalTooltips = builder
                     .comment("Show \"Grows in\" season lines on seed and crop tooltips.")

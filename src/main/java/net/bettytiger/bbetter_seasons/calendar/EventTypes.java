@@ -13,6 +13,7 @@ import java.util.Map;
  * Runtime registry of {@link EventType}s. Built-in types are registered on load; consumer mods add
  * their own by listening to {@code RegisterEventTypesEvent}.
  */
+@SuppressWarnings("ALL")
 public final class EventTypes {
 
     private static final Map<ResourceLocation, EventType> TYPES = new LinkedHashMap<>();
@@ -21,6 +22,10 @@ public final class EventTypes {
     public static final EventType FESTIVAL = register(new EventType(id("festival"), 0xF2C438, null));
     public static final EventType HOLIDAY = register(new EventType(id("holiday"), 0x5BC85B, null));
     public static final EventType ANNIVERSARY = register(new EventType(id("anniversary"), 0x7FA9FF, null));
+    public static final EventType GENERAL = register(new EventType(id("general"), 0x7FA9FF, null));
+    public static final EventType SOCIAL_GATHERING = register(new EventType(id("social_gathering"), 0x7FA9FF, null));
+    public static final EventType FORMAL = register(new EventType(id("formal"), 0x7FA9FF, null));
+    public static final EventType PARTY = register(new EventType(id("party"), 0x7FA9FF, null));
 
     private EventTypes() {
     }
