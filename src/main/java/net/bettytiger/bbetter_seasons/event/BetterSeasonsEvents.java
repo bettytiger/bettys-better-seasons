@@ -4,7 +4,9 @@ import net.bettytiger.bbetter_seasons.BettysBetterSeasonsMod;
 import net.bettytiger.bbetter_seasons.calendar.CalendarManager;
 import net.bettytiger.bbetter_seasons.calendar.SeasonManager;
 import net.bettytiger.bbetter_seasons.command.BetterSeasonsCommands;
+import net.bettytiger.bbetter_seasons.seasonal.SeasonalCropRegistry;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -42,6 +44,7 @@ public class BetterSeasonsEvents {
     @SubscribeEvent
     public static void onAddReloadListener(AddReloadListenerEvent event) {
         event.addListener(new SeasonManager());
+        event.addListener(new SeasonalCropRegistry());
     }
 
     /** Fires on player login (per-player) and after {@code /reload} (null player = everyone). */
@@ -54,8 +57,12 @@ public class BetterSeasonsEvents {
         ServerPlayer player = event.getPlayer();
         if (player != null) {
             manager.syncTo(player);
+            manager.syncSeasonalTo(player);
         } else {
+            // /reload: seasonal JSON was re-read, so let consumers rebuild caches, then re-sync everyone.
+            MinecraftForge.EVENT_BUS.post(new SeasonalDataReloadEvent(manager.overworld().getServer()));
             manager.syncAll();
+            manager.syncSeasonalAll();
         }
     }
 

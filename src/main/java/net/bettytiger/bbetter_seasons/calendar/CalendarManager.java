@@ -1,11 +1,20 @@
 package net.bettytiger.bbetter_seasons.calendar;
 
+import net.bettytiger.bbetter_seasons.api.BetterSeasonsAPI;
 import net.bettytiger.bbetter_seasons.config.BetterSeasonsConfig;
+import net.bettytiger.bbetter_seasons.event.CalendarEventTriggerEvent;
+import net.bettytiger.bbetter_seasons.event.DayChangeEvent;
+import net.bettytiger.bbetter_seasons.event.SeasonChangeEvent;
+import net.bettytiger.bbetter_seasons.event.SubSeasonChangeEvent;
+import net.bettytiger.bbetter_seasons.event.YearChangeEvent;
 import net.bettytiger.bbetter_seasons.network.BetterSeasonsNetwork;
 import net.bettytiger.bbetter_seasons.network.SyncCalendarPacket;
+import net.bettytiger.bbetter_seasons.network.SyncSeasonalPacket;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -98,10 +107,70 @@ public class CalendarManager {
      */
     public void tick() {
         long absDay = currentAbsDay();
-        if (absDay != lastAbsDay) {
-            lastAbsDay = absDay;
-            syncAll();
+        if (absDay == lastAbsDay) {
+            return;
         }
+        long previous = lastAbsDay;
+        lastAbsDay = absDay;
+        syncAll();
+        if (previous != Long.MIN_VALUE) {
+            fireChangeEvents(previous, absDay);
+        }
+    }
+
+    /** Caps how many boundary events a single huge time skip may fire, to avoid pathological loops. */
+    private static final long MAX_BOUNDARY_EVENTS = 256;
+
+    private void fireChangeEvents(long old, long now) {
+        int d = daysPerSeason();
+        int s = seasons().size();
+        CalendarDate oldDate = dateOf(old);
+        CalendarDate newDate = dateOf(now);
+
+        MinecraftForge.EVENT_BUS.post(new DayChangeEvent(server, oldDate, newDate, now - old));
+
+        // Only enumerate forward-moving boundaries; backward jumps (admin edits) just re-sync.
+        if (now <= old) {
+            return;
+        }
+
+        if (oldDate.subSeason() != newDate.subSeason()) {
+            MinecraftForge.EVENT_BUS.post(new SubSeasonChangeEvent(server, oldDate.subSeason(), newDate.subSeason()));
+        }
+
+        long oldSeasonAbs = Math.floorDiv(old, (long) d);
+        long seasonCrossings = Math.floorDiv(now, (long) d) - oldSeasonAbs;
+        for (long k = 1; k <= Math.min(seasonCrossings, MAX_BOUNDARY_EVENTS); k++) {
+            long boundaryAbs = (oldSeasonAbs + k) * d;
+            MinecraftForge.EVENT_BUS.post(new SeasonChangeEvent(server, seasonIdAt(boundaryAbs - 1), seasonIdAt(boundaryAbs)));
+        }
+
+        long cycle = (long) d * s;
+        long oldYearAbs = Math.floorDiv(old, cycle);
+        long yearCrossings = Math.floorDiv(now, cycle) - oldYearAbs;
+        for (long k = 1; k <= Math.min(yearCrossings, MAX_BOUNDARY_EVENTS); k++) {
+            int newYear = (int) (oldYearAbs + k) + startYear();
+            MinecraftForge.EVENT_BUS.post(new YearChangeEvent(server, newYear - 1, newYear));
+        }
+
+        triggerCalendarEvents(newDate);
+    }
+
+    private void triggerCalendarEvents(CalendarDate date) {
+        for (CalendarEvent event : BetterSeasonsAPI.getEventsOn(overworld(), date)) {
+            MinecraftForge.EVENT_BUS.post(new CalendarEventTriggerEvent(server, event, date));
+        }
+    }
+
+    private CalendarDate dateOf(long absDay) {
+        return CalendarDate.of(absDay, daysPerSeason(), seasons().size(), startYear(), earlyEnd(), midEnd());
+    }
+
+    @Nullable
+    private ResourceLocation seasonIdAt(long absDay) {
+        int index = dateOf(absDay).seasonIndex();
+        List<Season> list = seasons();
+        return index >= 0 && index < list.size() ? list.get(index).id() : null;
     }
 
     // --- Commands ---
@@ -132,5 +201,17 @@ public class CalendarManager {
 
     public void syncTo(ServerPlayer player) {
         BetterSeasonsNetwork.sendTo(player, buildPacket());
+    }
+
+    public SyncSeasonalPacket buildSeasonalPacket() {
+        return new SyncSeasonalPacket(BetterSeasonsAPI.buildSeasonalSyncData());
+    }
+
+    public void syncSeasonalAll() {
+        BetterSeasonsNetwork.sendToAll(buildSeasonalPacket());
+    }
+
+    public void syncSeasonalTo(ServerPlayer player) {
+        BetterSeasonsNetwork.sendTo(player, buildSeasonalPacket());
     }
 }

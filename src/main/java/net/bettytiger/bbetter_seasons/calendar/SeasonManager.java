@@ -23,6 +23,7 @@ import java.util.Map;
  * The parsed, order-sorted list is held statically for the running server; the client gets its own
  * copy through {@code SyncCalendarPacket} and never reads this listener.
  */
+@SuppressWarnings("ALL")
 public class SeasonManager extends SimpleJsonResourceReloadListener {
 
     private static final Logger LOGGER = LogUtils.getLogger();

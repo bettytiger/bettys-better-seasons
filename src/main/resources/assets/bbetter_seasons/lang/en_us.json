@@ -18,6 +18,14 @@
 
   "chat.bbetter_seasons.date": "%1$s, Day %2$s of %3$s %4$s, Year %5$s",
 
+  "block.bbetter_seasons.withered_crop": "Withered Crop",
+
+  "event_type.bbetter_seasons.birthday": "Birthday",
+  "event_type.bbetter_seasons.festival": "Festival",
+  "event_type.bbetter_seasons.holiday": "Holiday",
+  "event_type.bbetter_seasons.anniversary": "Anniversary",
+
+
   "commands.bbetter_seasons.calendar.query": "Current date: %s",
   "commands.bbetter_seasons.set": "Calendar set to %s",
   "commands.bbetter_seasons.unknown_season": "Unknown season: %s",

@@ -21,10 +21,17 @@ public class BettysBetterSeasonsMod {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(this::commonSetup);
 
+        net.bettytiger.bbetter_seasons.registry.ModRegistry.register(modEventBus);
+
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, BetterSeasonsConfig.SERVER_SPEC);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        event.enqueueWork(BetterSeasonsNetwork::register);
+        event.enqueueWork(() -> {
+            BetterSeasonsNetwork.register();
+            // Built-in event types are already registered; let consumers add theirs.
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(
+                    new net.bettytiger.bbetter_seasons.event.RegisterEventTypesEvent());
+        });
     }
 }

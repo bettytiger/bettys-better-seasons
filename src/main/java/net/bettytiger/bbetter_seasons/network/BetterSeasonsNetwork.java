@@ -29,13 +29,18 @@ public class BetterSeasonsNetwork {
                 .decoder(SyncCalendarPacket::new)
                 .consumerMainThread(SyncCalendarPacket::handle)
                 .add();
+        CHANNEL.messageBuilder(SyncSeasonalPacket.class, nextId++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(SyncSeasonalPacket::encode)
+                .decoder(SyncSeasonalPacket::new)
+                .consumerMainThread(SyncSeasonalPacket::handle)
+                .add();
     }
 
-    public static void sendToAll(SyncCalendarPacket packet) {
+    public static void sendToAll(Object packet) {
         CHANNEL.send(PacketDistributor.ALL.noArg(), packet);
     }
 
-    public static void sendTo(ServerPlayer player, SyncCalendarPacket packet) {
+    public static void sendTo(ServerPlayer player, Object packet) {
         CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }
 }

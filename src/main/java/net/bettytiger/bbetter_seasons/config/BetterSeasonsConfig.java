@@ -28,6 +28,11 @@ public class BetterSeasonsConfig {
         public final ForgeConfigSpec.IntValue subSeasonMidEnd;
         public final ForgeConfigSpec.ConfigValue<List<? extends String>> seasonalDimensions;
 
+        public final ForgeConfigSpec.BooleanValue seasonalCropsEnabled;
+        public final ForgeConfigSpec.DoubleValue slowFactor;
+        public final ForgeConfigSpec.BooleanValue witherDropsSeed;
+        public final ForgeConfigSpec.EnumValue<net.bettytiger.bbetter_seasons.seasonal.OutOfSeasonRule> defaultRule;
+
         Server(ForgeConfigSpec.Builder builder) {
             builder.comment("Calendar rules. Changing days per season or season count shifts how existing dates read.")
                     .push("calendar");
@@ -55,6 +60,27 @@ public class BetterSeasonsConfig {
             seasonalDimensions = builder
                     .comment("Dimensions that follow the seasons. Dimensions not listed ignore seasons entirely.")
                     .defineList("seasonalDimensions", List.of("minecraft:overworld"), o -> o instanceof String);
+
+            builder.pop();
+
+            builder.comment("Seasonal crops: growth gating and withering driven by datapack data.")
+                    .push("seasonalCrops");
+
+            seasonalCropsEnabled = builder
+                    .comment("Master switch. When false, no crop is ever gated regardless of loaded data.")
+                    .define("enabled", true);
+
+            slowFactor = builder
+                    .comment("Growth-chance multiplier applied to crops with the 'slow' out-of-season rule.")
+                    .defineInRange("slowFactor", 0.25, 0.0, 1.0);
+
+            witherDropsSeed = builder
+                    .comment("Whether a crop that withers drops its seed.")
+                    .define("witherDropsSeed", false);
+
+            defaultRule = builder
+                    .comment("Out-of-season rule for crops that have no datapack entry and do not define their own.")
+                    .defineEnum("defaultRule", net.bettytiger.bbetter_seasons.seasonal.OutOfSeasonRule.NONE);
 
             builder.pop();
         }
