@@ -77,25 +77,25 @@ See the [Players Guide](documentation/Players.md) for everything else.
 
 ### 1. Add the dependency to `build.gradle`
 
-> Once the library is published to CurseForge/Modrinth you can pull it from a Maven; until then, drop the
-> jar into a local `libs/` folder and use the file dependency.
+Betty's Better Seasons is on CurseForge, so you can pull it with [CurseMaven](https://cursemaven.com):
 
 ```gradle
 repositories {
-    // Option A — CurseMaven (after the project is published on CurseForge)
-    maven { url = "https://cursemaven.com" }
-    // Option B — a local folder for the jar
-    flatDir { dirs "libs" }
+    exclusiveContent {
+        forRepository { maven { url "https://cursemaven.com" } }
+        filter { includeGroup "curse.maven" }
+    }
 }
 
 dependencies {
-    // Option A — CurseMaven (replace FILE_ID with the uploaded file id)
-    // implementation fg.deobf("curse.maven:bettys-better-seasons-PROJECT_ID:FILE_ID")
-
-    // Option B — local jar in libs/
-    implementation fg.deobf("net.bettytiger:bbetter_seasons:1.1.0-1.20.1")
+    // Betty's Better Seasons 1.1.0 for Minecraft 1.20.1
+    implementation fg.deobf("curse.maven:bettys-better-seasons-1744359:9178282")
 }
 ```
+
+For other versions, copy the **Curse Maven Snippet** from that file's CurseForge page. Developing your mod
+alongside the library? You can depend on a local build instead — see the
+[Developer Guide](documentation/Developers.md#developing-alongside-the-library).
 
 ### 2. Declare it in `META-INF/mods.toml`
 
