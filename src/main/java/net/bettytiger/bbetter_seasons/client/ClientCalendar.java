@@ -16,6 +16,7 @@ public final class ClientCalendar {
     private static CalendarDate date;
     private static List<Season> seasons = List.of();
     private static int daysPerSeason = 31;
+    private static int ticksPerDay = 24000;
 
     private ClientCalendar() {
     }
@@ -23,6 +24,7 @@ public final class ClientCalendar {
     public static void accept(SyncCalendarPacket packet) {
         seasons = List.copyOf(packet.seasons());
         daysPerSeason = packet.daysPerSeason();
+        ticksPerDay = packet.ticksPerDay();
         date = CalendarDate.of(
                 packet.absDay(),
                 packet.daysPerSeason(),
@@ -43,5 +45,9 @@ public final class ClientCalendar {
 
     public static int getDaysPerSeason() {
         return daysPerSeason;
+    }
+
+    public static int getTicksPerDay() {
+        return ticksPerDay;
     }
 }

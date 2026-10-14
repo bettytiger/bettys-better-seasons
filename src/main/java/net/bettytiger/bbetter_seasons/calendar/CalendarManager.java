@@ -9,6 +9,7 @@ import net.bettytiger.bbetter_seasons.event.SubSeasonChangeEvent;
 import net.bettytiger.bbetter_seasons.event.YearChangeEvent;
 import net.bettytiger.bbetter_seasons.network.BetterSeasonsNetwork;
 import net.bettytiger.bbetter_seasons.network.SyncCalendarPacket;
+import net.bettytiger.bbetter_seasons.network.SyncEventsPacket;
 import net.bettytiger.bbetter_seasons.network.SyncSeasonalPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -162,7 +163,7 @@ public class CalendarManager {
         }
     }
 
-    private CalendarDate dateOf(long absDay) {
+    public CalendarDate dateOf(long absDay) {
         return CalendarDate.of(absDay, daysPerSeason(), seasons().size(), startYear(), earlyEnd(), midEnd());
     }
 
@@ -192,7 +193,7 @@ public class CalendarManager {
     // --- Sync ---
 
     public SyncCalendarPacket buildPacket() {
-        return new SyncCalendarPacket(currentAbsDay(), daysPerSeason(), startYear(), earlyEnd(), midEnd(), seasons());
+        return new SyncCalendarPacket(currentAbsDay(), daysPerSeason(), ticksPerDay(), startYear(), earlyEnd(), midEnd(), seasons());
     }
 
     public void syncAll() {
@@ -213,5 +214,17 @@ public class CalendarManager {
 
     public void syncSeasonalTo(ServerPlayer player) {
         BetterSeasonsNetwork.sendTo(player, buildSeasonalPacket());
+    }
+
+    public SyncEventsPacket buildEventsPacket() {
+        return new SyncEventsPacket(CalendarEventSavedData.get(overworld()).getEvents());
+    }
+
+    public void syncEventsAll() {
+        BetterSeasonsNetwork.sendToAll(buildEventsPacket());
+    }
+
+    public void syncEventsTo(ServerPlayer player) {
+        BetterSeasonsNetwork.sendTo(player, buildEventsPacket());
     }
 }

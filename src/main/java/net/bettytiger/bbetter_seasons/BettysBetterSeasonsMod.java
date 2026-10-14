@@ -24,6 +24,8 @@ public class BettysBetterSeasonsMod {
         net.bettytiger.bbetter_seasons.registry.ModRegistry.register(modEventBus);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, BetterSeasonsConfig.SERVER_SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT,
+                net.bettytiger.bbetter_seasons.config.BetterSeasonsClientConfig.CLIENT_SPEC);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

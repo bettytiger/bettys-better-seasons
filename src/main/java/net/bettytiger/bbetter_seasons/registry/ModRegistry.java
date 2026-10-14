@@ -1,7 +1,9 @@
 package net.bettytiger.bbetter_seasons.registry;
 
 import net.bettytiger.bbetter_seasons.BettysBetterSeasonsMod;
+import net.bettytiger.bbetter_seasons.block.WallCalendarBlock;
 import net.bettytiger.bbetter_seasons.block.WitheredCropBlock;
+import net.bettytiger.bbetter_seasons.item.CalendarItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -38,6 +40,18 @@ public class ModRegistry {
 
     public static final RegistryObject<Item> WITHERED_CROP_ITEM = ITEMS.register("withered_crop",
             () -> new BlockItem(WITHERED_CROP.get(), new Item.Properties()));
+
+    public static final RegistryObject<Block> WALL_CALENDAR = BLOCKS.register("wall_calendar",
+            () -> new WallCalendarBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .strength(1.0f)
+                    .sound(SoundType.WOOD)));
+
+    public static final RegistryObject<Item> WALL_CALENDAR_ITEM = ITEMS.register("wall_calendar",
+            () -> new BlockItem(WALL_CALENDAR.get(), new Item.Properties()));
+
+    public static final RegistryObject<Item> CALENDAR = ITEMS.register("calendar",
+            () -> new CalendarItem(new Item.Properties().stacksTo(1)));
 
     private ModRegistry() {
     }

@@ -33,6 +33,9 @@ public class BetterSeasonsConfig {
         public final ForgeConfigSpec.BooleanValue witherDropsSeed;
         public final ForgeConfigSpec.EnumValue<net.bettytiger.bbetter_seasons.seasonal.OutOfSeasonRule> defaultRule;
 
+        public final ForgeConfigSpec.BooleanValue chatNotifications;
+        public final ForgeConfigSpec.IntValue notificationLeadDays;
+
         Server(ForgeConfigSpec.Builder builder) {
             builder.comment("Calendar rules. Changing days per season or season count shifts how existing dates read.")
                     .push("calendar");
@@ -81,6 +84,18 @@ public class BetterSeasonsConfig {
             defaultRule = builder
                     .comment("Out-of-season rule for crops that have no datapack entry and do not define their own.")
                     .defineEnum("defaultRule", net.bettytiger.bbetter_seasons.seasonal.OutOfSeasonRule.NONE);
+
+            builder.pop();
+
+            builder.comment("Day-change chat notifications.").push("notifications");
+
+            chatNotifications = builder
+                    .comment("Announce the day's calendar events in chat when the day changes.")
+                    .define("chatNotifications", true);
+
+            notificationLeadDays = builder
+                    .comment("Also announce events up to this many days ahead (0 = today only).")
+                    .defineInRange("leadDays", 3, 0, 100);
 
             builder.pop();
         }

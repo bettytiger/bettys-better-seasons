@@ -20,14 +20,16 @@ public class SyncCalendarPacket {
 
     private final long absDay;
     private final int daysPerSeason;
+    private final int ticksPerDay;
     private final int startYear;
     private final int earlyEnd;
     private final int midEnd;
     private final List<Season> seasons;
 
-    public SyncCalendarPacket(long absDay, int daysPerSeason, int startYear, int earlyEnd, int midEnd, List<Season> seasons) {
+    public SyncCalendarPacket(long absDay, int daysPerSeason, int ticksPerDay, int startYear, int earlyEnd, int midEnd, List<Season> seasons) {
         this.absDay = absDay;
         this.daysPerSeason = daysPerSeason;
+        this.ticksPerDay = ticksPerDay;
         this.startYear = startYear;
         this.earlyEnd = earlyEnd;
         this.midEnd = midEnd;
@@ -37,6 +39,7 @@ public class SyncCalendarPacket {
     public SyncCalendarPacket(FriendlyByteBuf buf) {
         this.absDay = buf.readLong();
         this.daysPerSeason = buf.readVarInt();
+        this.ticksPerDay = buf.readVarInt();
         this.startYear = buf.readVarInt();
         this.earlyEnd = buf.readVarInt();
         this.midEnd = buf.readVarInt();
@@ -51,6 +54,7 @@ public class SyncCalendarPacket {
     public void encode(FriendlyByteBuf buf) {
         buf.writeLong(absDay);
         buf.writeVarInt(daysPerSeason);
+        buf.writeVarInt(ticksPerDay);
         buf.writeVarInt(startYear);
         buf.writeVarInt(earlyEnd);
         buf.writeVarInt(midEnd);
@@ -66,6 +70,10 @@ public class SyncCalendarPacket {
 
     public int daysPerSeason() {
         return daysPerSeason;
+    }
+
+    public int ticksPerDay() {
+        return ticksPerDay;
     }
 
     public int startYear() {

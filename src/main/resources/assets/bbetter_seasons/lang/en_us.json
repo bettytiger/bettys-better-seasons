@@ -19,12 +19,22 @@
   "chat.bbetter_seasons.date": "%1$s, Day %2$s of %3$s %4$s, Year %5$s",
 
   "block.bbetter_seasons.withered_crop": "Withered Crop",
+  "block.bbetter_seasons.wall_calendar": "Wall Calendar",
+  "item.bbetter_seasons.calendar": "Calendar",
+  "screen.bbetter_seasons.calendar": "Calendar",
 
   "event_type.bbetter_seasons.birthday": "Birthday",
   "event_type.bbetter_seasons.festival": "Festival",
   "event_type.bbetter_seasons.holiday": "Holiday",
   "event_type.bbetter_seasons.anniversary": "Anniversary",
 
+
+  "tooltip.bbetter_seasons.grows_in": "Grows in: %s",
+  "tooltip.bbetter_seasons.out_of_season": "Out of season",
+  "tooltip.bbetter_seasons.peak": "Peak season: %1$s %2$s",
+
+  "chat.bbetter_seasons.event_today": "%s is today!",
+  "chat.bbetter_seasons.event_in_days": "%1$s in %2$s days",
 
   "commands.bbetter_seasons.calendar.query": "Current date: %s",
   "commands.bbetter_seasons.set": "Calendar set to %s",

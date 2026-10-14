@@ -58,11 +58,13 @@ public class BetterSeasonsEvents {
         if (player != null) {
             manager.syncTo(player);
             manager.syncSeasonalTo(player);
+            manager.syncEventsTo(player);
         } else {
             // /reload: seasonal JSON was re-read, so let consumers rebuild caches, then re-sync everyone.
             MinecraftForge.EVENT_BUS.post(new SeasonalDataReloadEvent(manager.overworld().getServer()));
             manager.syncAll();
             manager.syncSeasonalAll();
+            manager.syncEventsAll();
         }
     }
 

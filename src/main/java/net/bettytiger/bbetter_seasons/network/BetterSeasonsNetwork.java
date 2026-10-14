@@ -34,6 +34,11 @@ public class BetterSeasonsNetwork {
                 .decoder(SyncSeasonalPacket::new)
                 .consumerMainThread(SyncSeasonalPacket::handle)
                 .add();
+        CHANNEL.messageBuilder(SyncEventsPacket.class, nextId++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(SyncEventsPacket::encode)
+                .decoder(SyncEventsPacket::new)
+                .consumerMainThread(SyncEventsPacket::handle)
+                .add();
     }
 
     public static void sendToAll(Object packet) {

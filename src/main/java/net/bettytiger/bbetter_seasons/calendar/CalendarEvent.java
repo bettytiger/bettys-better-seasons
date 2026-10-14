@@ -1,6 +1,7 @@
 package net.bettytiger.bbetter_seasons.calendar;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -101,6 +102,15 @@ public class CalendarEvent {
                 tag.contains("color") ? tag.getInt("color") : null,
                 tag.hasUUID("owner") ? tag.getUUID("owner") : null,
                 tag.getCompound("data"));
+    }
+
+    public void writeTo(FriendlyByteBuf buf) {
+        buf.writeNbt(save());
+    }
+
+    public static CalendarEvent readFrom(FriendlyByteBuf buf) {
+        CompoundTag tag = buf.readNbt();
+        return load(tag != null ? tag : new CompoundTag());
     }
 
     public UUID getId() {
