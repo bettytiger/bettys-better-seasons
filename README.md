@@ -50,7 +50,7 @@ it is still a useful calendar for a vanilla pack.
 | Forge | `47.4.23+` (range `[47,)`) |
 | Java | `17` |
 | Mod ID / namespace | `bbetter_seasons` |
-| Current version | `0.0.1-1.20.1` |
+| Current version | `1.0.0-beta-1.20.1` |
 | License | GNU LGPL 3.0 |
 
 No other mod is required to run the library by itself.
@@ -81,7 +81,7 @@ dependencies {
     // implementation fg.deobf("curse.maven:bettys-better-seasons-PROJECT_ID:FILE_ID")
 
     // Option B — local jar in libs/
-    implementation fg.deobf("net.bettytiger:bbetter_seasons:0.0.1-1.20.1")
+    implementation fg.deobf("net.bettytiger:bbetter_seasons:1.0.0-beta-1.20.1")
 }
 ```
 
@@ -91,7 +91,7 @@ dependencies {
 [[dependencies."yourmodid"]]
     modId = "bbetter_seasons"
     mandatory = true                  # or false if you keep a no-seasons fallback
-    versionRange = "[0.0.1-1.20.1,)"  # match the version string you build against
+    versionRange = "[1.0.0-beta-1.20.1,)"  # match the version string you build against
     ordering = "AFTER"
     side = "BOTH"
 ```
