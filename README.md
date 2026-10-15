@@ -87,9 +87,9 @@ Betty's Better Seasons is on CurseForge, so you can pull it with [CurseMaven](ht
 
 ```gradle
 repositories {
-    exclusiveContent {
-        forRepository { maven { url "https://cursemaven.com" } }
-        filter { includeGroup "curse.maven" }
+    maven {
+        url "https://cursemaven.com"
+        content { includeGroup "curse.maven" }
     }
 }
 
