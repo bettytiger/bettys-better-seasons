@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -22,7 +23,7 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.List;
 import java.util.StringJoiner;
 
-/** Client Forge-bus display handlers: hiding chat during the transition, and seasonal item tooltips. */
+/** Client Forge-bus display handlers: hiding chat during the transition, seasonal tooltips, and seasonal colours. */
 @Mod.EventBusSubscriber(modid = BettysBetterSeasonsMod.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ClientDisplayEvents {
 
@@ -32,6 +33,19 @@ public class ClientDisplayEvents {
         if (SeasonTransition.isActive() && event.getOverlay().id().equals(VanillaGuiOverlay.CHAT_PANEL.id())) {
             event.setCanceled(true);
         }
+    }
+
+    @SubscribeEvent
+    public static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
+        SeasonalTint.reset();
+        ClientWeather.reset();
+    }
+
+    @SubscribeEvent
+    public static void onPlayerClone(ClientPlayerNetworkEvent.Clone event) {
+        // Fires on respawn and dimension change; a non-seasonal dimension (e.g. the Nether) drops the tint and snow.
+        SeasonalTint.refresh();
+        ClientWeather.refresh();
     }
 
     @SubscribeEvent
@@ -67,6 +81,10 @@ public class ClientDisplayEvents {
                 tooltip.add(Component.translatable("tooltip." + BettysBetterSeasonsMod.MODID + ".out_of_season")
                         .withStyle(ChatFormatting.RED));
             }
+        } else {
+            // An entry with no season limit grows year-round (it may still vary its speed by season).
+            tooltip.add(Component.translatable("tooltip." + BettysBetterSeasonsMod.MODID + ".grows_all")
+                    .withStyle(ChatFormatting.GREEN));
         }
 
         if (info.peak() != null) {

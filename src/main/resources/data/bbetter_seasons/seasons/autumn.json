@@ -1,5 +1,7 @@
 {
   "name": "season.bbetter_seasons.autumn",
   "color": "#E07A2B",
-  "order": 2
+  "order": 2,
+  "tint": "#E05A24",
+  "tint_strength": 0.7
 }

@@ -5,9 +5,14 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "bbetter_seasons.refmap.json",
   "mixins": [
+    "BiomeWeatherMixin",
+    "LevelWeatherMixin",
+    "ServerLevelWeatherMixin"
   ],
   "client": [
-    "CreateWorldGameTabMixin"
+    "BiomeColorMixin",
+    "CreateWorldGameTabMixin",
+    "LevelRendererWeatherMixin"
   ],
   "injectors": {
     "defaultRequire": 1

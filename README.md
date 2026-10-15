@@ -36,6 +36,11 @@ it is still a useful calendar for a vanilla pack.
 - **🥀 Lazy withering & greenhouses** — out-of-season crops wither on their next tick; two-block crops can
   handle their own removal via `ISeasonalCrop`. Exempt crops with a greenhouse soil tag, a dimension list,
   or a custom `SeasonExemption`.
+- **🍂 Seasonal colours** — grass and leaves (birch and spruce too) blend gradually through the year:
+  bright green spring, deeper green summer, red-orange autumn, light-blue winter. Each season's `tint`
+  and strength is set in its datapack JSON; players can turn it off in the client config.
+- **❄️ Seasonal weather** — it snows all winter. Any season can force `snow`, `rain` or `clear` weather
+  from its datapack JSON, and server owners can switch it off in the server config.
 - **📅 Calendar events** — birthdays, festivals, holidays and more, created in-game, from datapack
   templates, or in code. Recurring or one-time, with permission-gated editing.
 - **📋 Calendar event presets** — save a set of events as a preset (in-game, no code) and pick it on the
@@ -144,7 +149,7 @@ All under `data/<your_namespace>/…` — the library scans every namespace.
 
 | Path | Purpose |
 | --- | --- |
-| `seasons/*.json` | Define/override seasons: `name`, `color` (`"#RRGGBB"`), `order`, optional `icon` |
+| `seasons/*.json` | Define/override seasons: `name`, `color` (`"#RRGGBB"`), `order`, optional `icon`, `tint` and `tint_strength` (grass/leaf colour), `weather` (`vanilla`/`snow`/`rain`/`clear`) |
 | `seasonal/crops/*.json` | Map crops to seasons with rules/growth/peak (see below) |
 | `event_templates/*.json` | Pre-fill a world with a group of events (applied once per world) |
 

@@ -56,6 +56,7 @@
 
 
   "tooltip.bbetter_seasons.grows_in": "Grows in: %s",
+  "tooltip.bbetter_seasons.grows_all": "Grows in: All seasons",
   "tooltip.bbetter_seasons.out_of_season": "Out of season",
   "tooltip.bbetter_seasons.peak": "Peak season: %1$s %2$s",
 

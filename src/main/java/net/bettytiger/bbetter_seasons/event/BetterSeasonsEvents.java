@@ -7,6 +7,7 @@ import net.bettytiger.bbetter_seasons.calendar.EventTemplates;
 import net.bettytiger.bbetter_seasons.calendar.SeasonManager;
 import net.bettytiger.bbetter_seasons.command.BetterSeasonsCommands;
 import net.bettytiger.bbetter_seasons.seasonal.SeasonalCropRegistry;
+import net.bettytiger.bbetter_seasons.weather.SeasonalWeather;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -30,6 +31,7 @@ public class BetterSeasonsEvents {
     @SubscribeEvent
     public static void onServerStopped(ServerStoppedEvent event) {
         CalendarManager.onServerStopped();
+        SeasonalWeather.resetServer();
     }
 
     @SubscribeEvent
@@ -40,6 +42,7 @@ public class BetterSeasonsEvents {
         CalendarManager manager = CalendarManager.get();
         if (manager != null) {
             manager.tick();
+            SeasonalWeather.tickServer(manager);
         }
     }
 

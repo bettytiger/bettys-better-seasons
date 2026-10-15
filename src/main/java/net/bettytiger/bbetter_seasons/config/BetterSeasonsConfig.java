@@ -28,6 +28,7 @@ public class BetterSeasonsConfig {
         public final ForgeConfigSpec.IntValue subSeasonMidEnd;
         public final ForgeConfigSpec.ConfigValue<List<? extends String>> seasonalDimensions;
 
+        public final ForgeConfigSpec.BooleanValue seasonalWeather;
         public final ForgeConfigSpec.BooleanValue seasonalCropsEnabled;
         public final ForgeConfigSpec.DoubleValue slowFactor;
         public final ForgeConfigSpec.BooleanValue witherDropsSeed;
@@ -66,6 +67,13 @@ public class BetterSeasonsConfig {
                     .comment("Dimensions that follow the seasons. Dimensions not listed ignore seasons entirely.")
                     .defineList("seasonalDimensions", List.of("minecraft:overworld"), o -> o instanceof String);
 
+            builder.pop();
+
+            builder.comment("Seasonal weather, set per season with \"weather\" in its datapack JSON.").push("weather");
+            seasonalWeather = builder
+                    .comment("Apply each season's weather (e.g. snow all winter) in the seasonal dimensions. While a",
+                            "season forces its weather, /weather is overridden; set doWeatherCycle false to lock it instead.")
+                    .define("enabled", true);
             builder.pop();
 
             builder.comment("Seasonal crops: growth gating and withering driven by datapack data.")

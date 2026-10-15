@@ -3,8 +3,10 @@ package net.bettytiger.bbetter_seasons.client;
 import net.bettytiger.bbetter_seasons.calendar.CalendarDate;
 import net.bettytiger.bbetter_seasons.calendar.Season;
 import net.bettytiger.bbetter_seasons.network.SyncCalendarPacket;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Client-side mirror of the server calendar. Holds the last synced snapshot so later phases
@@ -20,6 +22,8 @@ public final class ClientCalendar {
     private static int startYear = 1;
     private static int earlyEnd = 10;
     private static int midEnd = 21;
+    private static Set<String> seasonalDimensions = Set.of("minecraft:overworld");
+    private static boolean seasonalWeather = true;
 
     private ClientCalendar() {
     }
@@ -31,6 +35,8 @@ public final class ClientCalendar {
         startYear = packet.startYear();
         earlyEnd = packet.earlyEnd();
         midEnd = packet.midEnd();
+        seasonalDimensions = Set.copyOf(packet.seasonalDimensions());
+        seasonalWeather = packet.seasonalWeather();
         date = CalendarDate.of(
                 packet.absDay(),
                 packet.daysPerSeason(),
@@ -67,5 +73,15 @@ public final class ClientCalendar {
 
     public static int getMidEnd() {
         return midEnd;
+    }
+
+    /** Whether the server lists this dimension as following the seasons. */
+    /** Whether the server applies each season's weather. */
+    public static boolean isSeasonalWeather() {
+        return seasonalWeather;
+    }
+
+    public static boolean isSeasonalDimension(ResourceLocation dimension) {
+        return seasonalDimensions.contains(dimension.toString());
     }
 }

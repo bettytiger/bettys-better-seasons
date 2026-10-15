@@ -325,9 +325,9 @@ public final class BetterSeasonsAPI {
     }
 
     private static boolean isSeasonalDimension(Level level) {
-        // The dimension list is server config; on the client, don't gate tooltips by dimension.
+        // The dimension list is server config; the client uses the copy synced with the calendar.
         if (level.isClientSide) {
-            return true;
+            return ClientCalendar.isSeasonalDimension(level.dimension().location());
         }
         String dim = level.dimension().location().toString();
         return BetterSeasonsConfig.SERVER.seasonalDimensions.get().contains(dim);

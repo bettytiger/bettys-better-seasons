@@ -29,13 +29,21 @@ public class SeasonManager extends SimpleJsonResourceReloadListener {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final Gson GSON = new GsonBuilder().create();
 
-    /** Code-level fallback used only if no datapack (not even this mod's own) supplies any seasons. */
+    /**
+     * Code-level fallback used only if no datapack (not even this mod's own) supplies any seasons.
+     * Mirrors {@code data/bbetter_seasons/seasons/*.json}.
+     */
     public static final List<Season> DEFAULTS = List.of(
-            new Season(new ResourceLocation(BettysBetterSeasonsMod.MODID, "spring"), "season." + BettysBetterSeasonsMod.MODID + ".spring", 0x7FC241, 0, null),
-            new Season(new ResourceLocation(BettysBetterSeasonsMod.MODID, "summer"), "season." + BettysBetterSeasonsMod.MODID + ".summer", 0xF2C438, 1, null),
-            new Season(new ResourceLocation(BettysBetterSeasonsMod.MODID, "autumn"), "season." + BettysBetterSeasonsMod.MODID + ".autumn", 0xE07A2B, 2, null),
-            new Season(new ResourceLocation(BettysBetterSeasonsMod.MODID, "winter"), "season." + BettysBetterSeasonsMod.MODID + ".winter", 0x8FC7E8, 3, null)
+            builtIn("spring", 0x7FC241, 0, 0x7CF05A, 0.40f, SeasonWeather.VANILLA),
+            builtIn("summer", 0xF2C438, 1, 0x3FA83A, 0.30f, SeasonWeather.VANILLA),
+            builtIn("autumn", 0xE07A2B, 2, 0xE05A24, 0.70f, SeasonWeather.VANILLA),
+            builtIn("winter", 0x8FC7E8, 3, 0xB4DCF5, 0.85f, SeasonWeather.SNOW)
     );
+
+    private static Season builtIn(String path, int color, int order, int tint, float tintStrength, SeasonWeather weather) {
+        return new Season(new ResourceLocation(BettysBetterSeasonsMod.MODID, path),
+                "season." + BettysBetterSeasonsMod.MODID + "." + path, color, order, null, tint, tintStrength, weather);
+    }
 
     private static volatile List<Season> seasons = DEFAULTS;
 
@@ -66,18 +74,30 @@ public class SeasonManager extends SimpleJsonResourceReloadListener {
 
     private static Season parse(ResourceLocation id, JsonObject json) {
         String translationKey = GsonHelper.getAsString(json, "name", "season." + id.getNamespace() + "." + id.getPath());
-        int color = parseColor(json);
+        int color = parseColor(json, "color", 0xFFFFFF);
         int order = GsonHelper.getAsInt(json, "order", 0);
         ResourceLocation icon = json.has("icon") ? new ResourceLocation(GsonHelper.getAsString(json, "icon")) : null;
-        return new Season(id, translationKey, color, order, icon);
+        int tint = parseColor(json, "tint", Season.NO_TINT);
+        float tintStrength = Math.max(0.0f, Math.min(1.0f, GsonHelper.getAsFloat(json, "tint_strength", 0.5f)));
+        SeasonWeather weather = SeasonWeather.VANILLA;
+        if (json.has("weather")) {
+            String name = GsonHelper.getAsString(json, "weather");
+            weather = SeasonWeather.byName(name);
+            if (weather == null) {
+                LOGGER.warn("Season '{}' has unknown weather '{}' (expected vanilla, snow, rain or clear); using vanilla",
+                        id, name);
+                weather = SeasonWeather.VANILLA;
+            }
+        }
+        return new Season(id, translationKey, color, order, icon, tint, tintStrength, weather);
     }
 
-    /** Accepts either a "#RRGGBB" string or a raw integer. Defaults to white. */
-    private static int parseColor(JsonObject json) {
-        if (!json.has("color")) {
-            return 0xFFFFFF;
+    /** Accepts either a "#RRGGBB" string or a raw integer; returns {@code fallback} when the key is absent. */
+    private static int parseColor(JsonObject json, String key, int fallback) {
+        if (!json.has(key)) {
+            return fallback;
         }
-        JsonElement element = json.get("color");
+        JsonElement element = json.get(key);
         if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isString()) {
             String s = element.getAsString().trim();
             if (s.startsWith("#")) {

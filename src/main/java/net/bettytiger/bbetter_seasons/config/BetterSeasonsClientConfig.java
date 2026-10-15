@@ -4,7 +4,7 @@ import net.bettytiger.bbetter_seasons.client.HudCorner;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
-/** Client-only display config: the date HUD, seasonal tooltips, and the transition screen. */
+/** Client-only display config: the date HUD, seasonal tooltips and colours, and the transition screen. */
 public class BetterSeasonsClientConfig {
 
     public static final Client CLIENT;
@@ -22,6 +22,7 @@ public class BetterSeasonsClientConfig {
         public final ForgeConfigSpec.DoubleValue hudScale;
         public final ForgeConfigSpec.IntValue hudMargin;
         public final ForgeConfigSpec.BooleanValue seasonalTooltips;
+        public final ForgeConfigSpec.BooleanValue seasonalColors;
         public final ForgeConfigSpec.BooleanValue transitionScreen;
         public final ForgeConfigSpec.IntValue transitionDurationTicks;
 
@@ -46,6 +47,10 @@ public class BetterSeasonsClientConfig {
             seasonalTooltips = builder
                     .comment("Show \"Grows in\" season lines on seed and crop tooltips.")
                     .define("seasonalTooltips", true);
+
+            seasonalColors = builder
+                    .comment("Tint grass and leaves with the season's colour (set per season in its datapack JSON).")
+                    .define("seasonalColors", true);
 
             builder.comment("Season transition screen (black fade on season change).").push("transition");
             transitionScreen = builder

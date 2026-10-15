@@ -12,7 +12,8 @@ import net.minecraftforge.network.simple.SimpleChannel;
 @SuppressWarnings("ALL")
 public class BetterSeasonsNetwork {
 
-    private static final String PROTOCOL_VERSION = "1";
+    // Bump whenever a packet's format changes, so mismatched client/server versions are refused cleanly.
+    private static final String PROTOCOL_VERSION = "2";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder
             .named(new ResourceLocation(BettysBetterSeasonsMod.MODID, "main"))

@@ -15,8 +15,24 @@ import org.jetbrains.annotations.Nullable;
  * @param color         RGB tint used by the HUD and transition screen (0xRRGGBB)
  * @param order         sort order; lower comes first in the calendar cycle
  * @param icon          optional icon texture, may be null
+ * @param tint          grass and leaf colour at the season's peak (0xRRGGBB), or {@link #NO_TINT} to leave
+ *                      vanilla colours alone
+ * @param tintStrength  how far grass and leaves are blended toward {@code tint}, 0 (vanilla) to 1 (full tint)
+ * @param weather       the season's weather rule, e.g. snow all winter
  */
-public record Season(ResourceLocation id, String translationKey, int color, int order, @Nullable ResourceLocation icon) {
+public record Season(ResourceLocation id, String translationKey, int color, int order, @Nullable ResourceLocation icon,
+                     int tint, float tintStrength, SeasonWeather weather) {
+
+    public static final int NO_TINT = -1;
+
+    /** A season that leaves grass and leaf colours and the weather unchanged. */
+    public Season(ResourceLocation id, String translationKey, int color, int order, @Nullable ResourceLocation icon) {
+        this(id, translationKey, color, order, icon, NO_TINT, 0.0f, SeasonWeather.VANILLA);
+    }
+
+    public boolean hasTint() {
+        return tint != NO_TINT;
+    }
 
     public MutableComponent displayName() {
         return Component.translatable(translationKey);
@@ -31,6 +47,9 @@ public record Season(ResourceLocation id, String translationKey, int color, int 
         if (icon != null) {
             buf.writeResourceLocation(icon);
         }
+        buf.writeInt(tint);
+        buf.writeFloat(tintStrength);
+        buf.writeEnum(weather);
     }
 
     public static Season readFrom(FriendlyByteBuf buf) {
@@ -39,6 +58,9 @@ public record Season(ResourceLocation id, String translationKey, int color, int 
         int color = buf.readInt();
         int order = buf.readVarInt();
         ResourceLocation icon = buf.readBoolean() ? buf.readResourceLocation() : null;
-        return new Season(id, translationKey, color, order, icon);
+        int tint = buf.readInt();
+        float tintStrength = buf.readFloat();
+        SeasonWeather weather = buf.readEnum(SeasonWeather.class);
+        return new Season(id, translationKey, color, order, icon, tint, tintStrength, weather);
     }
 }

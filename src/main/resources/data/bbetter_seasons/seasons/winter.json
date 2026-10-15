@@ -1,5 +1,8 @@
 {
   "name": "season.bbetter_seasons.winter",
   "color": "#8FC7E8",
-  "order": 3
+  "order": 3,
+  "tint": "#B4DCF5",
+  "tint_strength": 0.85,
+  "weather": "snow"
 }

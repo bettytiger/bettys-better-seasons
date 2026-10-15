@@ -194,7 +194,9 @@ public class CalendarManager {
     // --- Sync ---
 
     public SyncCalendarPacket buildPacket() {
-        return new SyncCalendarPacket(currentAbsDay(), daysPerSeason(), ticksPerDay(), startYear(), earlyEnd(), midEnd(), seasons());
+        return new SyncCalendarPacket(currentAbsDay(), daysPerSeason(), ticksPerDay(), startYear(), earlyEnd(), midEnd(),
+                seasons(), List.copyOf(BetterSeasonsConfig.SERVER.seasonalDimensions.get()),
+                BetterSeasonsConfig.SERVER.seasonalWeather.get());
     }
 
     public void syncAll() {

@@ -1,5 +1,7 @@
 {
   "name": "season.bbetter_seasons.summer",
   "color": "#F2C438",
-  "order": 1
+  "order": 1,
+  "tint": "#3FA83A",
+  "tint_strength": 0.3
 }
