@@ -59,7 +59,7 @@ it is still a useful calendar for a vanilla pack.
 | Forge | `47.4.23+` (range `[47,)`) |
 | Java | `17` |
 | Mod ID / namespace | `bbetter_seasons` |
-| Current version | `1.1.0-1.20.1` |
+| Current version | `1.2.0-1.20.1` |
 | License | GNU LGPL 3.0 |
 
 No other mod is required to run the library by itself.
