@@ -95,7 +95,7 @@ repositories {
 
 dependencies {
     // Betty's Better Seasons 1.1.0 for Minecraft 1.20.1
-    implementation fg.deobf("curse.maven:bettys-better-seasons-1744359:9178282")
+  implementation fg.deobf("curse.maven:bettys-better-seasons-1744359:9191585")
 }
 ```
 
@@ -109,7 +109,7 @@ alongside the library? You can depend on a local build instead — see the
 [[dependencies."yourmodid"]]
     modId = "bbetter_seasons"
     mandatory = true                  # or false if you keep a no-seasons fallback
-    versionRange = "[1.1.0-1.20.1,)"  # match the version string you build against
+    versionRange = "[1.2.0-1.20.1,)"  # match the version string you build against
     ordering = "AFTER"
     side = "BOTH"
 ```
