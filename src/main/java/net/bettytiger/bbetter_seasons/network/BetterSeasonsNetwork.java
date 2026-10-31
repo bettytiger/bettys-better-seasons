@@ -8,11 +8,8 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
-/** The mod's single play channel. Phase 1 only sends {@link SyncCalendarPacket}. */
 @SuppressWarnings("ALL")
 public class BetterSeasonsNetwork {
-
-    // Bump whenever a packet's format changes, so mismatched client/server versions are refused cleanly.
     private static final String PROTOCOL_VERSION = "2";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder
